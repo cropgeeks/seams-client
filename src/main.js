@@ -48,6 +48,8 @@ Vue.use(TooltipPlugin)
 
 require('es6-promise/auto')
 
+const axiosDefaults = require('axios/lib/defaults')
+
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -61,6 +63,8 @@ let baseUrl = './api/'
 if (process.env.VUE_APP_BASE_URL) {
   baseUrl = process.env.VUE_APP_BASE_URL
 }
+
+axiosDefaults.baseURL = baseUrl
 
 store.commit('ON_SERVER_URL_CHANGED', baseUrl)
 

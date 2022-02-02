@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="dark" variant="primary" id="main-navigation">
+    <b-navbar toggleable="lg" type="dark" variant="dark" id="main-navigation">
       <b-navbar-brand :to="{ name: 'home' }" class="d-flex align-items-center">
         <!-- <img src="img/gridscore2.svg" height="40px" class="d-inline-block align-top mr-3" alt="GridScore"> -->
         SEAMS
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { BIconInfoCircle, BIconFlag } from 'bootstrap-vue'
 
@@ -49,6 +50,12 @@ export default {
       }]
     }
   },
+  computed: {
+    /** Mapgetters exposing the store configuration */
+    ...mapGetters([
+      'storeLocale'
+    ])
+  },
   methods: {
     /**
      * When the locale is changed, update the i18n settings
@@ -60,11 +67,16 @@ export default {
         this.$store.dispatch('setLocale', language.locale)
       })
     }
+  },
+  mounted: function () {
+    loadLanguageAsync(this.storeLocale)
   }
 }
 </script>
 
 <style lang="scss">
+@import '~bootswatch/dist/simplex/variables';
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index.scss';
+@import '~bootswatch/dist/simplex/bootswatch';
 </style>
