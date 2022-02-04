@@ -1,16 +1,18 @@
 <template>
   <div>
-    <LMap :zoom="3" ref="locationMap" @ready="loadMap" class="map">
+    <LMap ref="locationMap" :bounds="bounds" @ready="loadMap" class="map">
       <LCircleMarker v-for="location in locationData"
                      :radius="location.value"
-                     :stroke="false"
+                     :weight="0.25"
                      :opacity="1"
-                     :fillOpacity="0.5"
+                     color="white"
+                     :fillOpacity="0.3"
                      fillColor="fuchsia"
                      :key="`marker-${location.dataset.datasetId}`"
                      :latLng="[location.dataset.latitude, location.dataset.longitude]">
         <LPopup>
-          {{ location.dataset.siteName }}
+          <p>{{ location.dataset.siteName }}</p>
+          <p>{{ variable }}: {{ location.value.toFixed(2) }}</p>
         </LPopup>
       </LCircleMarker>
     </LMap>
@@ -33,17 +35,53 @@ export default {
   data: function () {
     return {
       serverData: null,
-      cropName: 'Maize'
+      cropName: null, // 'Maize'
+      variable: 'ler'
     }
   },
   computed: {
+    bounds: function () {
+      const b = L.latLngBounds()
+
+      this.locationData.forEach(l => b.extend([l.dataset.latitude, l.dataset.longitude]))
+
+      if (b.isValid()) {
+        return b.pad(0.1)
+      } else {
+        return null
+      }
+    },
     locationData: function () {
       if (this.serverData) {
-        return this.serverData.filter(s => this.cropName === null || (s.componentData && s.componentData.some(c => c.component.cropName === this.cropName)))
+        return this.serverData
+          .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180)
+          .filter(s => this.cropName === null || (s.componentData && s.componentData.some(c => c.component.cropName === this.cropName)))
           .map(s => {
+            let value
+
+            if (this.variable === 'ler') {
+              if (s.componentData) {
+                value = s.componentData.map(c => {
+                  const monoYield = c.data.find(d => d.measurementType === 'mono' && d.traitName === 'Yield')
+                  const mixYield = c.data.find(d => d.measurementType === 'mix' && d.traitName === 'Yield')
+
+                  if (monoYield !== undefined && mixYield !== undefined) {
+                    return mixYield.measurement / monoYield.measurement * 5
+                  } else {
+                    return null
+                  }
+                })
+                  .filter(a => a !== null)
+                  .reduce((a, b) => a + b, 0)
+              } else {
+                value = 0
+              }
+            } else {
+              value = s.componentIds ? s.componentIds.length : 0
+            }
             return {
               dataset: s,
-              value: s.componentIds ? s.componentIds.length : 0
+              value: value
             }
           })
       } else {
