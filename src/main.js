@@ -24,7 +24,8 @@ import {
   CardPlugin,
   FormSelectPlugin,
   InputGroupPlugin,
-  TooltipPlugin
+  TooltipPlugin,
+  TablePlugin
 } from 'bootstrap-vue'
 
 Vue.use(LayoutPlugin)
@@ -45,6 +46,7 @@ Vue.use(CardPlugin)
 Vue.use(FormSelectPlugin)
 Vue.use(InputGroupPlugin)
 Vue.use(TooltipPlugin)
+Vue.use(TablePlugin)
 
 require('es6-promise/auto')
 

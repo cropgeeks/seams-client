@@ -2,7 +2,7 @@
   <div>
     <LMap ref="locationMap" :bounds="bounds" @ready="loadMap" class="map">
       <LCircleMarker v-for="location in locationData"
-                     :radius="location.value"
+                     :radius="location.radius"
                      :weight="0.25"
                      :opacity="1"
                      color="white"
@@ -53,20 +53,26 @@ export default {
     },
     locationData: function () {
       if (this.serverData) {
-        return this.serverData
+        let max = 0
+        let min = 0
+        const result = this.serverData
           .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180)
           .filter(s => this.cropName === null || (s.componentData && s.componentData.some(c => c.component.cropName === this.cropName)))
           .map(s => {
-            let value
+            let value = null
 
             if (this.variable === 'ler') {
+              // Calculate the LER
               if (s.componentData) {
+                // Reduce across all components by summing up
                 value = s.componentData.map(c => {
+                  // Get their yield inside the monoculture and mixture
                   const monoYield = c.data.find(d => d.measurementType === 'mono' && d.traitName === 'Yield')
                   const mixYield = c.data.find(d => d.measurementType === 'mix' && d.traitName === 'Yield')
 
                   if (monoYield !== undefined && mixYield !== undefined) {
-                    return mixYield.measurement / monoYield.measurement * 5
+                    // If both are defined, return the ratio
+                    return mixYield.measurement / monoYield.measurement
                   } else {
                     return null
                   }
@@ -79,11 +85,28 @@ export default {
             } else {
               value = s.componentIds ? s.componentIds.length : 0
             }
+
+            if (value !== null) {
+              min = Math.min(min, value)
+              max = Math.max(max, value)
+            }
+
             return {
               dataset: s,
               value: value
             }
           })
+
+        // Normalize the values into the interval [0, 20]
+        result.forEach(s => {
+          if (s.value !== null) {
+            s.radius = (s.value - min) * 20 / (max - min)
+          } else {
+            s.radius = 0
+          }
+        })
+
+        return result
       } else {
         return []
       }
