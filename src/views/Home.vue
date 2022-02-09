@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <SiteTable />
-    <SiteMap />
+    <SiteTable @datasets-changed="updateMap" />
+    <SiteMap ref="map" />
   </div>
 </template>
 
@@ -14,6 +14,13 @@ export default {
   components: {
     SiteMap,
     SiteTable
+  },
+  methods: {
+    updateMap: function (ids) {
+      if (this.$refs.map) {
+        this.$refs.map.filterDatasets(ids)
+      }
+    }
   }
 }
 </script>

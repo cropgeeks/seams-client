@@ -1,6 +1,9 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <h1>About</h1>
+
+    <h2>Icon credit</h2>
+    <p>This page uses icons provided from contributors on <a href="https://thenounproject.com/">The Noun Project</a>. Specifically, here is a list of all icons used on this page:</p>
     <ul>
       <li><a href="https://thenounproject.com/icon/oat-853928/">Oat</a> by Martina Krasnayová from NounProject.com</li>
       <li><a href="https://thenounproject.com/icon/barley-26098/">Barley</a> by Nathan Stang from NounProject.com</li>
@@ -16,6 +19,7 @@
       <li><a href="https://thenounproject.com/icon/turnip-4575804/">Turnip</a> by Ranah Pixel Studio from NounProject.com</li>
       <li><a href="https://thenounproject.com/icon/strawberry-1993361/">Strawberry</a> by Ivy from NounProject.com</li>
       <li><a href="https://thenounproject.com/icon/spikelet-3819810/">Spikelet</a> by Olena Panasovska from NounProject.com</li>
+      <li><a href="https://thenounproject.com/icon/potato-3861014/">Potato</a> by myiconfinder from NounProject.com</li>
     </ul>
   </div>
 </template>

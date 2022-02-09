@@ -25,7 +25,8 @@ import {
   FormSelectPlugin,
   InputGroupPlugin,
   TooltipPlugin,
-  TablePlugin
+  TablePlugin,
+  PaginationPlugin
 } from 'bootstrap-vue'
 
 Vue.use(LayoutPlugin)
@@ -47,6 +48,7 @@ Vue.use(FormSelectPlugin)
 Vue.use(InputGroupPlugin)
 Vue.use(TooltipPlugin)
 Vue.use(TablePlugin)
+Vue.use(PaginationPlugin)
 
 require('es6-promise/auto')
 

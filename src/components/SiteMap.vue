@@ -36,7 +36,8 @@ export default {
     return {
       serverData: null,
       cropName: null, // 'Maize'
-      variable: 'ler'
+      variable: 'ler',
+      filterDatasetIds: null
     }
   },
   computed: {
@@ -56,6 +57,7 @@ export default {
         let max = 0
         let min = 0
         const result = this.serverData
+          .filter(s => this.filterDatasetIds ? this.filterDatasetIds.includes(s.datasetId) : true)
           .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180)
           .filter(s => this.cropName === null || (s.componentData && s.componentData.some(c => c.component.cropName === this.cropName)))
           .map(s => {
@@ -114,6 +116,9 @@ export default {
   },
   mixins: [api],
   methods: {
+    filterDatasets: function (datasetIds) {
+      this.filterDatasetIds = datasetIds
+    },
     loadMap: function () {
       // Add OSM as the default
       const openstreetmap = L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

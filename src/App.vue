@@ -80,8 +80,15 @@ export default {
 </script>
 
 <style lang="scss">
+$primary: #A3CB38;
+
 @import '~bootswatch/dist/simplex/variables';
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index.scss';
 @import '~bootswatch/dist/simplex/bootswatch';
+
+body {
+  // This is to stop tables from overflowing in production.
+  overflow-x: hidden;
+}
 </style>
