@@ -81,6 +81,7 @@ export default {
 
 <style lang="scss">
 $primary: #A3CB38;
+$secondary: #bdc3c7;
 
 @import '~bootswatch/dist/simplex/variables';
 @import '~bootstrap/scss/bootstrap';

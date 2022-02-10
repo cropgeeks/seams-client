@@ -1,5 +1,8 @@
 <template>
   <div>
+    <b-button-group>
+      <b-button><BIconPercent /> LER</b-button>
+    </b-button-group>
     <LMap ref="locationMap" :bounds="bounds" @ready="loadMap" class="map">
       <LCircleMarker v-for="location in locationData"
                      :radius="location.radius"
@@ -23,6 +26,7 @@
 import api from '@/mixins/api'
 import L from 'leaflet'
 import { LMap, LCircleMarker, LPopup } from 'vue2-leaflet'
+import { BIconPercent } from 'bootstrap-vue'
 
 import 'leaflet/dist/leaflet.css'
 
@@ -30,7 +34,8 @@ export default {
   components: {
     LMap,
     LCircleMarker,
-    LPopup
+    LPopup,
+    BIconPercent
   },
   data: function () {
     return {
@@ -59,18 +64,20 @@ export default {
         const result = this.serverData
           .filter(s => this.filterDatasetIds ? this.filterDatasetIds.includes(s.datasetId) : true)
           .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180)
-          .filter(s => this.cropName === null || (s.componentData && s.componentData.some(c => c.component.cropName === this.cropName)))
+          .filter(s => this.cropName === null || (s.components && s.components.some(c => c.cropName === this.cropName)))
           .map(s => {
             let value = null
 
             if (this.variable === 'ler') {
               // Calculate the LER
-              if (s.componentData) {
+              if (s.data && s.components) {
                 // Reduce across all components by summing up
-                value = s.componentData.map(c => {
+                value = s.components.map(c => {
                   // Get their yield inside the monoculture and mixture
-                  const monoYield = c.data.find(d => d.measurementType === 'mono' && d.traitName === 'Yield')
-                  const mixYield = c.data.find(d => d.measurementType === 'mix' && d.traitName === 'Yield')
+                  const monoYield = s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mono' && d.traitName === 'Yield')
+                  const mixYield = s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mix' && d.traitName === 'Yield')
+
+                  console.log(s.datasetId, c.cropName, monoYield, mixYield)
 
                   if (monoYield !== undefined && mixYield !== undefined) {
                     // If both are defined, return the ratio
@@ -109,6 +116,7 @@ export default {
         })
 
         return result
+          .filter(l => l.value > 0)
       } else {
         return []
       }

@@ -19,26 +19,26 @@
              striped
              hover
              class="site-table" >
-      <template #cell(componentData)="data">
-        <i class="icon-barley" v-if="data.item.componentNames && data.item.componentNames.includes('barley')" v-b-tooltip="'Barley'" />
-        <i class="icon-beans" v-if="data.item.componentNames && data.item.componentNames.includes('beans')" v-b-tooltip="'Beans'" />
-        <i class="icon-blueberry" v-if="data.item.componentNames && data.item.componentNames.includes('blueberry')" v-b-tooltip="'Blueberry'" />
-        <i class="icon-clover" v-if="data.item.componentNames && data.item.componentNames.includes('clover')" v-b-tooltip="'Clover'" />
-        <i class="icon-linseed" v-if="data.item.componentNames && data.item.componentNames.includes('linseed')" v-b-tooltip="'Linseed'" />
-        <i class="icon-maize" v-if="data.item.componentNames && data.item.componentNames.includes('maize')" v-b-tooltip="'Maize'" />
-        <i class="icon-oats" v-if="data.item.componentNames && data.item.componentNames.includes('oats')" v-b-tooltip="'Oats'" />
-        <i class="icon-oilseed" v-if="data.item.componentNames && data.item.componentNames.includes('oilseed')" v-b-tooltip="'Oilseed'" />
-        <i class="icon-peas" v-if="data.item.componentNames && data.item.componentNames.includes('peas')" v-b-tooltip="'Peas'" />
-        <i class="icon-potato" v-if="data.item.componentNames && data.item.componentNames.includes('potato')" v-b-tooltip="'Potato'" />
-        <i class="icon-raspberry" v-if="data.item.componentNames && data.item.componentNames.includes('raspberry')" v-b-tooltip="'Raspberry'" />
-        <i class="icon-rye" v-if="data.item.componentNames && data.item.componentNames.includes('rye')" v-b-tooltip="'Rye'" />
-        <i class="icon-strawberry" v-if="data.item.componentNames && data.item.componentNames.includes('strawberry')" v-b-tooltip="'Strawberry'" />
-        <i class="icon-turnip" v-if="data.item.componentNames && data.item.componentNames.includes('turnip')" v-b-tooltip="'Turnip'" />
-        <i class="icon-wheat" v-if="data.item.componentNames && data.item.componentNames.includes('wheat')" v-b-tooltip="'Wheat'" />
-        <span class="icon-wheat" v-if="data.item.componentNames && data.item.componentNames.includes('vetch')" v-b-tooltip="'Vetch'">V</span>
-        <b-button size="sm" variant="primary" class="ml-2" @click="data.toggleDetails" v-if="data.item.componentData">
+      <template #cell(components)="data">
+        <b-button size="sm" variant="primary" class="mr-2" @click="data.toggleDetails" v-if="data.item.components">
           <BIconInfoCircle />
         </b-button>
+        <i class="icon-barley mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('barley')" v-b-tooltip="'Barley'" />
+        <i class="icon-beans mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('beans')" v-b-tooltip="'Beans'" />
+        <i class="icon-blueberry mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('blueberry')" v-b-tooltip="'Blueberry'" />
+        <i class="icon-clover mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('clover')" v-b-tooltip="'Clover'" />
+        <i class="icon-linseed mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('linseed')" v-b-tooltip="'Linseed'" />
+        <i class="icon-maize mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('maize')" v-b-tooltip="'Maize'" />
+        <i class="icon-oats mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('oats')" v-b-tooltip="'Oats'" />
+        <i class="icon-oilseed mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('oilseed')" v-b-tooltip="'Oilseed'" />
+        <i class="icon-peas mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('peas')" v-b-tooltip="'Peas'" />
+        <i class="icon-potato mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('potato')" v-b-tooltip="'Potato'" />
+        <i class="icon-raspberry mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('raspberry')" v-b-tooltip="'Raspberry'" />
+        <i class="icon-rye mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('rye')" v-b-tooltip="'Rye'" />
+        <i class="icon-strawberry mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('strawberry')" v-b-tooltip="'Strawberry'" />
+        <i class="icon-turnip mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('turnip')" v-b-tooltip="'Turnip'" />
+        <i class="icon-wheat mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('wheat')" v-b-tooltip="'Wheat'" />
+        <span class="icon-wheat mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('vetch')" v-b-tooltip="'Vetch'">V</span>
       </template>
       <template #cell(fertilizer)="data">
         <span class="text-nowrap">
@@ -79,13 +79,17 @@
 
       <template #row-details="data">
         <b-row>
-          <b-col cols=12 sm=6 md=4 v-for="component in data.item.componentData" :key="`ds-${data.item.datasetId}-comp-${component.component.id}`">
-            <i :class="`icon-${component.component.cropName.toLowerCase()}`" /> {{ component.component.cropName }}
-            <ul>
-              <li v-for="datum in component.data" :key="`measurement-${datum.measurementId}`">
-                {{ datum.traitName }} - {{ datum.measurementType }}: {{ datum.measurement }} {{ datum.traitUnitName }}
-              </li>
-            </ul>
+          <b-col cols=12 sm=6 md=4 v-for="component in data.item.components" :key="`ds-${data.item.datasetId}-comp-${component.id}`">
+            <b-card class="mb-3">
+              <b-card-title>
+                <i :class="`icon-${component.cropName.toLowerCase()}`" /> {{ component.cropName }}
+              </b-card-title>
+              <ul>
+                <li v-for="datum in data.item.data.filter(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(component.id))" :key="`measurement-${datum.measurementId}`">
+                  {{ datum.traitName }} - {{ datum.measurementType }}: {{ datum.measurement }} {{ datum.traitUnitName }}
+                </li>
+              </ul>
+            </b-card>
           </b-col>
         </b-row>
       </template>
@@ -114,7 +118,7 @@ export default {
   data: function () {
     return {
       currentPage: 1,
-      perPage: 25,
+      perPage: 10,
       itemCount: 0,
       filteredItems: null,
       serverData: null,
@@ -125,7 +129,7 @@ export default {
         { key: 'siteName', label: 'Site name', sortable: true },
         { key: 'latitude', label: 'Latitude', formatter: value => value !== null ? value.toFixed(2) : null, class: 'text-right', sortable: true },
         { key: 'longitude', label: 'Longitude', formatter: value => value !== null ? value.toFixed(2) : null, class: 'text-right', sortable: true },
-        { key: 'componentData', labels: 'Components' },
+        { key: 'components', labels: 'Components' },
         { key: 'fertilizer', label: 'Fertilizer', sortable: true },
         { key: 'tillage', label: 'Tillage', sortable: true },
         { key: 'farmManagement', label: 'Farm management', sortable: true },
@@ -164,7 +168,7 @@ export default {
           }
         } else if (typeof value === 'string') {
           return value.toLowerCase().includes(filter.toLowerCase())
-        } else if (k === 'componentData' && row.componentNames) {
+        } else if (k === 'component' && row.componentNames) {
           return row.componentNames.filter(c => c.includes(filter.toLowerCase())).length > 0
         }
       }).length > 0
