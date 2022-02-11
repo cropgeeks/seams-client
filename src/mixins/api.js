@@ -2,8 +2,11 @@ const axios = require('axios').default
 
 export default {
   methods: {
-    apiGetData: function () {
-      return this.axios('dataset')
+    apiGetDatasets: function () {
+      return this.axios({ url: 'dataset' })
+    },
+    apiGetDatasetData: function () {
+      return this.axios({ url: 'dataset/data', dataType: 'blob' })
     },
     /**
      * Sends an axios REST request to the server with the given parameter configuration
@@ -12,7 +15,7 @@ export default {
      * @param {String} method (Optional) REST method (default: `'get'`)
      * @returns Promise
      */
-    axios: function (url, params = null, method = 'get') {
+    axios: function ({ url = null, params = null, method = 'get', dataType = 'json', contentType = 'application/json; charset=utf-8' }) {
       let requestData = null
       let requestParams = null
 
@@ -31,8 +34,9 @@ export default {
         data: requestData,
         method: method,
         crossDomain: true,
+        responseType: dataType,
         headers: {
-          'Content-Type': 'application/json; charset=utf-8'
+          'Content-Type': contentType
         }
       })
     }

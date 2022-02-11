@@ -1,8 +1,11 @@
 <template>
   <div>
     <b-button-group>
-      <b-button><BIconPercent /> LER</b-button>
+      <b-button :pressed="variable === 'ler'" @click="variable = 'ler'"><BIconPercent /> LER</b-button>
+      <b-button :pressed="variable === 'yield'" @click="variable = 'yield'"><i class="icofont-tractor" /> Yield</b-button>
+      <b-button :pressed="variable === 'sowingRate'" @click="variable = 'sowingRate'"><i class="icofont-cement-mix" /> Sowing rate</b-button>
     </b-button-group>
+
     <LMap ref="locationMap" :bounds="bounds" @ready="loadMap" class="map">
       <LCircleMarker v-for="location in locationData"
                      :radius="location.radius"
@@ -10,7 +13,7 @@
                      :opacity="1"
                      color="white"
                      :fillOpacity="0.3"
-                     fillColor="fuchsia"
+                     fillColor="#EA2027"
                      :key="`marker-${location.dataset.datasetId}`"
                      :latLng="[location.dataset.latitude, location.dataset.longitude]">
         <LPopup>
@@ -77,8 +80,6 @@ export default {
                   const monoYield = s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mono' && d.traitName === 'Yield')
                   const mixYield = s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mix' && d.traitName === 'Yield')
 
-                  console.log(s.datasetId, c.cropName, monoYield, mixYield)
-
                   if (monoYield !== undefined && mixYield !== undefined) {
                     // If both are defined, return the ratio
                     return mixYield.measurement / monoYield.measurement
@@ -91,6 +92,12 @@ export default {
               } else {
                 value = 0
               }
+            } else if (this.variable === 'yield') {
+              // TODO
+              value = 100
+            } else if (this.variable === 'sowingRate') {
+              // TODO
+              value = 100
             } else {
               value = s.componentIds ? s.componentIds.length : 0
             }
@@ -157,7 +164,7 @@ export default {
     }
   },
   mounted: function () {
-    this.apiGetData()
+    this.apiGetDatasets()
       .then(result => {
         if (result && result.data) {
           this.serverData = result.data

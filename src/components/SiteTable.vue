@@ -82,7 +82,7 @@
           <b-col cols=12 sm=6 md=4 v-for="component in data.item.components" :key="`ds-${data.item.datasetId}-comp-${component.id}`">
             <b-card class="mb-3">
               <b-card-title>
-                <i :class="`icon-${component.cropName.toLowerCase()}`" /> {{ component.cropName }}
+                <i :class="`icon-${component.cropName.toLowerCase()}`" /> {{ component.cropName }} - {{ component.varietyName }}
               </b-card-title>
               <ul>
                 <li v-for="datum in data.item.data.filter(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(component.id))" :key="`measurement-${datum.measurementId}`">
@@ -145,7 +145,6 @@ export default {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.itemCount = rows.length
       this.currentPage = 1
-      console.log(rows)
       this.filteredDatasetIds = rows.map(r => r.datasetId)
     },
     filterTable: function (row, filter) {
@@ -175,7 +174,7 @@ export default {
     }
   },
   created: function () {
-    this.apiGetData()
+    this.apiGetDatasets()
       .then(result => {
         if (result && result.data) {
           this.serverData = result.data
