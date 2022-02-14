@@ -123,6 +123,13 @@ export default {
       filteredItems: null,
       serverData: null,
       filter: null,
+      families: {
+        legumes: ['peas', 'beans', 'clover', 'vetch'],
+        cereal: ['barley', 'wheat', 'maize', 'oats', 'rye'],
+        other: ['linseed', 'oilseed'],
+        vegetable: ['turnip'],
+        fruit: ['strawberry', 'raspberry', 'blueberry']
+      },
       columns: [
         { key: 'datasetId', label: 'Dataset id', sortable: true },
         { key: 'datasetName', label: 'Dataset name', sortable: true },
@@ -173,7 +180,13 @@ export default {
           return value.toLowerCase().includes(filter.toLowerCase())
         } else if (k === 'components' && row.componentNames) {
           // Check the component array
-          return row.componentNames.filter(c => c.includes(filter.toLowerCase())).length > 0
+          const family = this.families[filter.toLowerCase()]
+
+          if (family) {
+            return row.componentNames.some(c => family.includes(c))
+          } else {
+            return row.componentNames.filter(c => c.includes(filter.toLowerCase())).length > 0
+          }
         }
       }).length > 0
     }
