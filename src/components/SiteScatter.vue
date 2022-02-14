@@ -8,7 +8,7 @@
         <b-form-select :options="variables" v-model="variableTwo" />
       </b-col>
     </b-row>
-    <div ref="chart" />
+    <div ref="chart" class="mb-5" />
   </div>
 </template>
 
@@ -98,6 +98,5 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
 </style>

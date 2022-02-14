@@ -43,7 +43,6 @@ export default {
   data: function () {
     return {
       serverData: null,
-      cropName: null, // 'Maize'
       variable: 'ler',
       filterDatasetIds: null
     }
@@ -65,9 +64,8 @@ export default {
         let max = 0
         let min = 0
         const result = this.serverData
-          .filter(s => this.filterDatasetIds ? this.filterDatasetIds.includes(s.datasetId) : true)
-          .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180)
-          .filter(s => this.cropName === null || (s.components && s.components.some(c => c.cropName === this.cropName)))
+          .filter(s => this.filterDatasetIds ? this.filterDatasetIds.includes(s.datasetId) : true) // Restrict to filtered dataset ids (if any)
+          .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180) // Restrict to valid lat/lng values
           .map(s => {
             let value = null
 

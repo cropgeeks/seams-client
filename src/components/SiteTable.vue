@@ -20,7 +20,7 @@
              hover
              class="site-table" >
       <template #cell(components)="data">
-        <b-button size="sm" variant="primary" class="mr-2" @click="data.toggleDetails" v-if="data.item.components">
+        <b-button size="sm" :variant="data.item.components ? 'primary' : 'secondary'" class="mr-2" @click="data.toggleDetails" :disabled="!data.item.components">
           <BIconInfoCircle />
         </b-button>
         <i class="icon-barley mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('barley')" v-b-tooltip="'Barley'" />
@@ -152,22 +152,27 @@ export default {
         return true
       }
 
+      // Check all fields of the object
       return Object.keys(row).filter(k => {
         const value = row[k]
 
+        // If there's no value, it's not a match
         if (value === undefined || value === null) {
           return false
         }
 
         if (typeof value === 'number') {
+          // Check numbers
           if (isNaN(filter)) {
             return value === filter
           } else {
             return value === +filter
           }
         } else if (typeof value === 'string') {
+          // Check strings
           return value.toLowerCase().includes(filter.toLowerCase())
-        } else if (k === 'component' && row.componentNames) {
+        } else if (k === 'components' && row.componentNames) {
+          // Check the component array
           return row.componentNames.filter(c => c.includes(filter.toLowerCase())).length > 0
         }
       }).length > 0
