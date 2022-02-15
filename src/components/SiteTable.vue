@@ -1,6 +1,8 @@
 <template>
   <div>
-    <b-input class="site-table-filter" type="search" placeholder="Search" v-model="filter" />
+    <b-form-group label="Filter" label-for="search">
+      <b-input id="search" class="site-table-filter" type="search" placeholder="Search (e.g. 'barley', 'plough' or 'organic')" v-model="filter" />
+    </b-form-group>
     <b-table id="dataset-table"
              :items="serverData"
              :fields="columns"
@@ -102,18 +104,21 @@
       aria-controls="dataset-table"
     ></b-pagination>
 
-    <b-button variant="primary" @click="$emit('datasets-changed', filteredDatasetIds)">Update map using filter</b-button>
+    <div class="text-center">
+      <b-button variant="primary" @click="$emit('datasets-changed', filteredDatasetIds)"><BIconArrowDownSquareFill /> Update map using filter</b-button>
+    </div>
   </div>
 </template>
 
 <script>
 import api from '@/mixins/api'
 
-import { BIconInfoCircle } from 'bootstrap-vue'
+import { BIconInfoCircle, BIconArrowDownSquareFill } from 'bootstrap-vue'
 
 export default {
   components: {
-    BIconInfoCircle
+    BIconInfoCircle,
+    BIconArrowDownSquareFill
   },
   data: function () {
     return {

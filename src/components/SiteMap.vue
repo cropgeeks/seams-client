@@ -138,8 +138,8 @@ export default {
         id: 'OpenStreetMap',
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         subdomains: ['a', 'b', 'c'],
-        maxZoom: 21,
-        maxNativeZoom: 19
+        maxZoom: 14,
+        maxNativeZoom: 18
       })
 
       const map = this.$refs.locationMap.mapObject

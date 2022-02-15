@@ -2,13 +2,19 @@
   <div>
     <b-row>
       <b-col cols=12 sm=6>
-        <b-form-select :options="variables" v-model="variableOne" />
+        <b-form-group label="Dimension 1" label-for="variableOne">
+          <b-form-select id="variableOne" :options="variables" v-model="variableOne" />
+        </b-form-group>
       </b-col>
       <b-col cols=12 sm=6>
-        <b-form-select :options="variables" v-model="variableTwo" />
+        <b-form-group label="Dimension 2" label-for="variableTwo">
+          <b-form-select id="variableTwo" :options="variables" v-model="variableTwo" />
+        </b-form-group>
       </b-col>
       <b-col cols=12 sm=6>
-        <b-form-select :options="colorByOptions" v-model="colorBy" />
+        <b-form-group label="Colour by" label-for="colorBy">
+          <b-form-select id="colorBy" :options="colorByOptions" v-model="colorBy" />
+        </b-form-group>
       </b-col>
     </b-row>
     <div ref="chart" class="mb-5" />
