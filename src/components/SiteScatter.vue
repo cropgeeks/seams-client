@@ -7,6 +7,9 @@
       <b-col cols=12 sm=6>
         <b-form-select :options="variables" v-model="variableTwo" />
       </b-col>
+      <b-col cols=12 sm=6>
+        <b-form-select :options="colorByOptions" v-model="colorBy" />
+      </b-col>
     </b-row>
     <div ref="chart" class="mb-5" />
   </div>
@@ -25,7 +28,23 @@ export default {
       blob: null,
       variables: null,
       variableOne: null,
-      variableTwo: null
+      variableTwo: null,
+      colorByOptions: [
+        { value: null, text: 'Select colouring option' },
+        { value: 'dataset_name', text: 'Dataset' },
+        { value: 'site_name', text: 'Site' },
+        { value: 'tillage', text: 'Tillage' },
+        { value: 'dataset_name', text: 'Dataset' },
+        { value: 'fertilizer', text: 'Fertilizer' },
+        { value: 'farm_management', text: 'Farm Management' },
+        { value: 'dataset_name', text: 'Dataset' },
+        { value: 'weed_cover', text: 'Weed cover' },
+        { value: 'disease', text: 'Disease' },
+        { value: 'pests', text: 'Pests' },
+        { value: 'dataset_name', text: 'Dataset' },
+        { value: 'measurement_type', text: 'Mono/Mix' }
+      ],
+      colorBy: null
     }
   },
   watch: {
@@ -36,6 +55,9 @@ export default {
       this.redraw()
     },
     variableTwo: function () {
+      this.redraw()
+    },
+    colorBy: function () {
       this.redraw()
     }
   },
@@ -54,12 +76,39 @@ export default {
       this.$plotly.purge(this.$refs.chart)
 
       if (this.variableOne && this.variableTwo && this.blob) {
-        const data = [{
-          x: this.plotlyUnpack(this.blob, this.variableOne),
-          y: this.plotlyUnpack(this.blob, this.variableTwo),
-          type: 'scatter',
-          mode: 'markers'
-        }]
+        let cats = []
+
+        if (this.colorBy) {
+          const categories = new Set()
+
+          var unpacked = this.plotlyUnpack(this.blob, this.colorBy)
+          for (let i = 0; i < unpacked.length; i++) {
+            categories.add(unpacked[i])
+          }
+
+          cats = Array.from(categories)
+          cats.sort()
+        }
+
+        let data
+        if (cats.length > 0) {
+          data = cats.map(c => {
+            return {
+              x: this.plotlyUnpackConditional(this.blob, this.variableOne, this.colorBy, c),
+              y: this.plotlyUnpackConditional(this.blob, this.variableTwo, this.colorBy, c),
+              type: 'scatter',
+              mode: 'markers',
+              name: c
+            }
+          })
+        } else {
+          data = [{
+            x: this.plotlyUnpack(this.blob, this.variableOne),
+            y: this.plotlyUnpack(this.blob, this.variableTwo),
+            type: 'scatter',
+            mode: 'markers'
+          }]
+        }
 
         const layout = {
           xaxis: {
