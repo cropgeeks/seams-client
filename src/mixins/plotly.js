@@ -26,7 +26,7 @@ export default {
           var value = parseFloat(dataPoint)
 
           if (isNaN(value)) {
-            return dataPoint
+            return dataPoint.trim()
           } else {
             return value
           }
