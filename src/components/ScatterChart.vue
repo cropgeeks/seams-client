@@ -93,7 +93,13 @@ export default {
 
           var unpacked = this.plotlyUnpack(this.plotData, this.colorBy)
           for (let i = 0; i < unpacked.length; i++) {
-            categories.add(unpacked[i].trim())
+            if (unpacked[i] !== undefined && unpacked[i] !== null) {
+              if (typeof unpacked[i] === 'string') {
+                categories.add(unpacked[i].trim())
+              } else {
+                categories.add(unpacked[i])
+              }
+            }
           }
 
           cats = Array.from(categories)
@@ -110,14 +116,14 @@ export default {
               mode: 'markers',
               name: c
             }
-          })
+          }).filter(d => d.x.length > 0 && d.y.length > 0 && d.x.some(x => x !== null) && d.y.some(y => y !== null))
         } else {
           data = [{
             x: this.plotlyUnpack(this.plotData, this.variableOne),
             y: this.plotlyUnpack(this.plotData, this.variableTwo),
             type: 'scatter',
             mode: 'markers'
-          }]
+          }].filter(d => d.x.length > 0 && d.y.length > 0 && d.x.some(x => x !== null) && d.y.some(y => y !== null))
         }
 
         const layout = {

@@ -1,13 +1,12 @@
 <template>
   <div>
     <b-form-group label="Filter" label-for="search">
-      <b-input id="search" class="site-table-filter" type="search" placeholder="Search (e.g. 'barley', 'plough' or 'organic')" v-model="filter" />
+      <b-input id="search" class="site-table-filter" type="search" :debounce="100" placeholder="Search (e.g. 'barley', 'plough' or 'organic')" v-model="filter" />
     </b-form-group>
     <b-table id="dataset-table"
              :items="serverData"
              :fields="columns"
              :filter="filter"
-             :filter-debounce="100"
              :filter-function="filterTable"
              :per-page="perPage"
              :current-page="currentPage"
@@ -233,68 +232,5 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 12ch;
-}
-i.icon-fertilizer {
-  background-image: url("~@/assets/img/fertilizer.svg");
-}
-i.icon-tillage {
-  background-image: url("~@/assets/img/tillage.svg");
-}
-i.icon-farm-management {
-  background-image: url("~@/assets/img/farm-management.svg");
-}
-i.icon-weed-cover {
-  background-image: url("~@/assets/img/weed-cover.svg");
-}
-i.icon-sowing-date {
-  background-image: url("~@/assets/img/sowing-date.svg");
-}
-i.icon-harvest-date {
-  background-image: url("~@/assets/img/harvest-date.svg");
-}
-i.icon-barley {
-  background-image: url("~@/assets/img/crops/barley.svg");
-}
-i.icon-beans {
-  background-image: url("~@/assets/img/crops/bean.svg");
-}
-i.icon-blueberry {
-  background-image: url("~@/assets/img/crops/blueberry.svg");
-}
-i.icon-clover {
-  background-image: url("~@/assets/img/crops/clover.svg");
-}
-i.icon-linseed {
-  background-image: url("~@/assets/img/crops/flax.svg");
-}
-i.icon-maize {
-  background-image: url("~@/assets/img/crops/maize.svg");
-}
-i.icon-oats {
-  background-image: url("~@/assets/img/crops/oat.svg");
-}
-i.icon-oilseed {
-  background-image: url("~@/assets/img/crops/canola.svg");
-}
-i.icon-peas {
-  background-image: url("~@/assets/img/crops/pea.svg");
-}
-i.icon-raspberry {
-  background-image: url("~@/assets/img/crops/raspberry.svg");
-}
-i.icon-rye {
-  background-image: url("~@/assets/img/crops/rye.svg");
-}
-i.icon-strawberry {
-  background-image: url("~@/assets/img/crops/strawberry.svg");
-}
-i.icon-turnip {
-  background-image: url("~@/assets/img/crops/turnip.svg");
-}
-i.icon-wheat {
-  background-image: url("~@/assets/img/crops/wheat.svg");
-}
-i.icon-potato {
-  background-image: url("~@/assets/img/crops/potato.svg");
 }
 </style>

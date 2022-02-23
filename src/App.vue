@@ -92,4 +92,71 @@ body {
   // This is to stop tables from overflowing in production.
   overflow-x: hidden;
 }
+
+i.icon-value {
+  background-image: url("~@/assets/img/value.svg");
+}
+i.icon-fertilizer {
+  background-image: url("~@/assets/img/fertilizer.svg");
+}
+i.icon-tillage {
+  background-image: url("~@/assets/img/tillage.svg");
+}
+i.icon-farm-management {
+  background-image: url("~@/assets/img/farm-management.svg");
+}
+i.icon-weed-cover {
+  background-image: url("~@/assets/img/weed-cover.svg");
+}
+i.icon-sowing-date {
+  background-image: url("~@/assets/img/sowing-date.svg");
+}
+i.icon-harvest-date {
+  background-image: url("~@/assets/img/harvest-date.svg");
+}
+i.icon-barley {
+  background-image: url("~@/assets/img/crops/barley.svg");
+}
+i.icon-beans {
+  background-image: url("~@/assets/img/crops/bean.svg");
+}
+i.icon-blueberry {
+  background-image: url("~@/assets/img/crops/blueberry.svg");
+}
+i.icon-clover {
+  background-image: url("~@/assets/img/crops/clover.svg");
+}
+i.icon-linseed {
+  background-image: url("~@/assets/img/crops/flax.svg");
+}
+i.icon-maize {
+  background-image: url("~@/assets/img/crops/maize.svg");
+}
+i.icon-oats {
+  background-image: url("~@/assets/img/crops/oat.svg");
+}
+i.icon-oilseed {
+  background-image: url("~@/assets/img/crops/canola.svg");
+}
+i.icon-peas {
+  background-image: url("~@/assets/img/crops/pea.svg");
+}
+i.icon-raspberry {
+  background-image: url("~@/assets/img/crops/raspberry.svg");
+}
+i.icon-rye {
+  background-image: url("~@/assets/img/crops/rye.svg");
+}
+i.icon-strawberry {
+  background-image: url("~@/assets/img/crops/strawberry.svg");
+}
+i.icon-turnip {
+  background-image: url("~@/assets/img/crops/turnip.svg");
+}
+i.icon-wheat {
+  background-image: url("~@/assets/img/crops/wheat.svg");
+}
+i.icon-potato {
+  background-image: url("~@/assets/img/crops/potato.svg");
+}
 </style>

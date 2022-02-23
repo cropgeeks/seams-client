@@ -20,6 +20,7 @@
       <li><a href="https://thenounproject.com/icon/strawberry-1993361/">Strawberry</a> by Ivy from NounProject.com</li>
       <li><a href="https://thenounproject.com/icon/spikelet-3819810/">Spikelet</a> by Olena Panasovska from NounProject.com</li>
       <li><a href="https://thenounproject.com/icon/potato-3861014/">Potato</a> by myiconfinder from NounProject.com</li>
+      <li><a href="https://thenounproject.com/icon/metrics-4476061/">Metrics</a> by Foodicons Collection from NounProject.com</li>
     </ul>
   </div>
 </template>
