@@ -1,7 +1,12 @@
 <template>
   <div>
-    <b-form-group label="Filter" label-for="search">
-      <b-input id="search" class="site-table-filter" type="search" :debounce="100" placeholder="Search (e.g. 'barley', 'plough' or 'organic')" v-model="filter" />
+    <b-form-group label="Filter" label-for="search" class="mb-0">
+      <b-input-group>
+        <b-input id="search" class="site-table-filter" type="search" :debounce="100" placeholder="Search (e.g. 'barley', 'plough' or 'organic')" v-model="filter" />
+        <b-input-group-append is-text>
+          <b-form-checkbox v-b-tooltip="'\'All\' requires ALL words in the search to occur in a dataset while \'Some\' requires at least one.'" switch v-model="isAnd">{{ isAnd ? 'All' : 'Some' }}</b-form-checkbox>
+        </b-input-group-append>
+      </b-input-group>
     </b-form-group>
     <b-table id="dataset-table"
              :items="serverData"
@@ -22,24 +27,11 @@
              class="site-table" >
       <template #cell(components)="data">
         <b-button size="sm" :variant="data.item.components ? 'primary' : 'secondary'" class="mr-2" @click="data.toggleDetails" :disabled="!data.item.components">
-          <BIconInfoCircle />
+          <i class="icon-mixture" />
         </b-button>
-        <i class="icon-barley mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('barley')" v-b-tooltip="'Barley'" />
-        <i class="icon-beans mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('beans')" v-b-tooltip="'Beans'" />
-        <i class="icon-blueberry mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('blueberry')" v-b-tooltip="'Blueberry'" />
-        <i class="icon-clover mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('clover')" v-b-tooltip="'Clover'" />
-        <i class="icon-linseed mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('linseed')" v-b-tooltip="'Linseed'" />
-        <i class="icon-maize mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('maize')" v-b-tooltip="'Maize'" />
-        <i class="icon-oats mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('oats')" v-b-tooltip="'Oats'" />
-        <i class="icon-oilseed mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('oilseed')" v-b-tooltip="'Oilseed'" />
-        <i class="icon-peas mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('peas')" v-b-tooltip="'Peas'" />
-        <i class="icon-potato mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('potato')" v-b-tooltip="'Potato'" />
-        <i class="icon-raspberry mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('raspberry')" v-b-tooltip="'Raspberry'" />
-        <i class="icon-rye mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('rye')" v-b-tooltip="'Rye'" />
-        <i class="icon-strawberry mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('strawberry')" v-b-tooltip="'Strawberry'" />
-        <i class="icon-turnip mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('turnip')" v-b-tooltip="'Turnip'" />
-        <i class="icon-wheat mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('wheat')" v-b-tooltip="'Wheat'" />
-        <span class="icon-wheat mx-1" v-if="data.item.componentNames && data.item.componentNames.includes('vetch')" v-b-tooltip="'Vetch'">V</span>
+        <template v-if="data.item.componentNames">
+          <i :class="`icon-${component ? component.toLowerCase() : null} mx-1`" v-for="component in data.item.componentNames" :key="`row-${data.index}-${component}`" v-b-tooltip="component" />
+        </template>
       </template>
       <template #cell(fertilizer)="data">
         <span class="text-nowrap">
@@ -57,6 +49,12 @@
         <span class="text-nowrap">
           <i :class="{ 'icon-farm-management': true, disabled: !data.item.farmManagement }" />
           <span v-if="data.item.farmManagement" class="ml-2 text-preview" v-b-tooltip="data.item.farmManagement">{{ data.item.farmManagement }}</span>
+        </span>
+      </template>
+      <template #cell(coverCrop)="data">
+        <span class="text-nowrap">
+          <i :class="{ 'icon-covercrop': true, disabled: !data.item.coverCrop }" />
+          <span v-if="data.item.coverCrop" class="ml-2 text-preview" v-b-tooltip="data.item.coverCrop">{{ data.item.coverCrop }}</span>
         </span>
       </template>
       <template #cell(weedCover)="data">
@@ -112,11 +110,10 @@
 <script>
 import api from '@/mixins/api'
 
-import { BIconInfoCircle, BIconArrowDownSquareFill } from 'bootstrap-vue'
+import { BIconArrowDownSquareFill } from 'bootstrap-vue'
 
 export default {
   components: {
-    BIconInfoCircle,
     BIconArrowDownSquareFill
   },
   data: function () {
@@ -127,12 +124,12 @@ export default {
       filteredItems: null,
       serverData: null,
       filter: null,
+      isAnd: true,
       families: {
-        legumes: ['peas', 'beans', 'clover', 'vetch'],
-        cereal: ['barley', 'wheat', 'maize', 'oats', 'rye'],
-        other: ['linseed', 'oilseed'],
-        vegetable: ['turnip'],
-        fruit: ['strawberry', 'raspberry', 'blueberry']
+        legumes: ['peas', 'beans', 'clover', 'lentil'],
+        cereals: ['barley', 'wheat', 'maize', 'oats', 'rye'],
+        oilseeds: ['linseed', 'turnip', 'oilseed', 'rape'],
+        other: ['plantain']
       },
       columns: [
         { key: 'datasetId', label: 'Dataset id', sortable: true },
@@ -144,6 +141,7 @@ export default {
         { key: 'fertilizer', label: 'Fertilizer', sortable: true },
         { key: 'tillage', label: 'Tillage', sortable: true },
         { key: 'farmManagement', label: 'Farm management', sortable: true },
+        { key: 'coverCrop', label: 'Cover crop', sortable: true },
         { key: 'weedCover', label: 'Weed cover', sortable: true },
         { key: 'sowingDate', label: 'Sowing date', sortable: true },
         { key: 'harvestDate', label: 'Harvest date', sortable: true }
@@ -163,36 +161,44 @@ export default {
         return true
       }
 
-      // Check all fields of the object
-      return Object.keys(row).filter(k => {
-        const value = row[k]
+      const parts = filter.split(' ').map(p => p.trim().toLowerCase()).filter(p => p !== '')
 
-        // If there's no value, it's not a match
-        if (value === undefined || value === null) {
-          return false
-        }
+      const matches = parts.filter(p => {
+        return Object.keys(row).filter(k => {
+          const value = row[k]
 
-        if (typeof value === 'number') {
-          // Check numbers
-          if (isNaN(filter)) {
-            return value === filter
-          } else {
-            return value === +filter
+          // If there's no value, it's not a match
+          if (value === undefined || value === null) {
+            return false
           }
-        } else if (typeof value === 'string') {
-          // Check strings
-          return value.toLowerCase().includes(filter.toLowerCase())
-        } else if (k === 'components' && row.componentNames) {
-          // Check the component array
-          const family = this.families[filter.toLowerCase()]
 
-          if (family) {
-            return row.componentNames.some(c => family.includes(c))
+          if (typeof value === 'number') {
+            if (isNaN(p)) {
+              return value === p
+            } else {
+              return value === +p
+            }
+          } else if (typeof value === 'string') {
+            return value.toLowerCase().includes(p)
+          } else if (k === 'components' && row.componentNames) {
+            const family = this.families[p]
+
+            if (family) {
+              return row.componentNames.some(c => family.includes(c))
+            } else {
+              return row.componentNames.some(c => c.includes(p))
+            }
           } else {
-            return row.componentNames.filter(c => c.includes(filter.toLowerCase())).length > 0
+            return false
           }
-        }
-      }).length > 0
+        }).length > 0
+      }).length
+
+      if (this.isAnd) {
+        return matches === parts.length
+      } else {
+        return matches > 0
+      }
     }
   },
   created: function () {

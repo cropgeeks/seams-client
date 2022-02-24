@@ -96,6 +96,12 @@ body {
 i.icon-value {
   background-image: url("~@/assets/img/value.svg");
 }
+i.icon-covercrop {
+  background-image: url("~@/assets/img/covercrop.svg");
+}
+i.icon-mixture {
+  background-image: url("~@/assets/img/mixture.svg");
+}
 i.icon-fertilizer {
   background-image: url("~@/assets/img/fertilizer.svg");
 }
