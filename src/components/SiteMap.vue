@@ -2,7 +2,8 @@
   <div>
     <b-button-group class="color-options">
       <b-button :pressed="variable === 'ler'" @click="variable = 'ler'"><BIconPercent /> LER</b-button>
-      <b-button :pressed="variable === 'yield'" @click="variable = 'yield'"><i class="icon-mixture" /> Mixture yield</b-button>
+      <b-button :pressed="variable === 'mixYield'" @click="variable = 'mixYield'"><i class="icon-mixture" /> Mixture yield</b-button>
+      <b-button :pressed="variable === 'monoYield'" @click="variable = 'monoYield'"><i class="icon-mixture" /> Monoculture yield</b-button>
       <b-button :pressed="variable === 'tillage'" @click="variable = 'tillage'"><i class="icon-tillage" /> Tillage</b-button>
       <b-button :pressed="variable === 'farmManagement'" @click="variable = 'farmManagement'"><i class="icon-farm-management" /> Farm management</b-button>
       <b-button :pressed="variable === 'coverCrop'" @click="variable = 'coverCrop'"><i class="icon-covercrop" /> Cover crop</b-button>
@@ -22,11 +23,11 @@
                      :weight="0.25"
                      :opacity="1"
                      color="#f5f6fa"
-                     :fillOpacity="0.3"
+                     :fillOpacity="0.5"
                      :fillColor="location.color || '#EA2027'"
                      :tooltip="`${location.dataset.siteName}: ${location.value}`"
-                     :key="`marker-${location.dataset.datasetId}`"
-                     :latLng="[location.dataset.latitude, location.dataset.longitude]">
+                     :key="`marker-${location.id}`"
+                     :latLng="[location.lat, location.lng]">
         <LPopup>
           <h3 class="d-flex justify-content-between">
             <span>{{ location.dataset.siteName }}</span>
@@ -156,17 +157,39 @@ export default {
 
           cats = Array.from(set)
           cats.sort()
+        } else if (this.variable === 'monoYield') {
+          const set = new Set()
+
+          filteredData.filter(ds => ds.components).forEach(ds => ds.components.forEach(c => set.add(c.cropName.trim())))
+
+          cats = Array.from(set)
+          cats.sort()
         }
 
-        const result = filteredData.map(s => {
-          let value = null
-          let color = null
+        const result = []
+
+        filteredData.forEach(s => {
+          const addValue = (value, color, dataset, lat, lng) => {
+            result.push({
+              lat: lat,
+              lng: lng,
+              dataset: dataset,
+              value: value,
+              color: color,
+              id: this.uuidv4()
+            })
+
+            if (value !== null && !(typeof value === 'string')) {
+              min = Math.min(min, value)
+              max = Math.max(max, value)
+            }
+          }
 
           if (this.variable === 'ler') {
             // Calculate the LER
             if (s.data && s.components) {
               // Reduce across all components by summing up
-              value = s.components.map(c => {
+              const value = s.components.map(c => {
                 // Get their yield inside the monoculture and mixture
                 const monoYield = s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mono' && d.traitName === 'Yield')
                 const mixYield = s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mix' && d.traitName === 'Yield')
@@ -180,48 +203,55 @@ export default {
               })
                 .filter(a => a !== null)
                 .reduce((a, b) => a + b, 0)
-              color = this.colors[2]
+
+              addValue(value, this.colors[2], s, s.latitude, s.longitude)
             } else {
-              value = 0
+              addValue(0, null, s, s.latitude, s.longitude)
             }
-          } else if (this.variable === 'yield') {
+          } else if (this.variable === 'mixYield') {
             const mixYield = s.data.find(d => d.componentIds.length === s.components.length && d.traitName === 'Yield')
 
             if (mixYield !== undefined) {
-              value = mixYield.measurement
-              color = this.colors[2]
+              addValue(mixYield.measurement, this.colors[2], s, s.latitude, s.longitude)
             } else {
-              value = 0
+              addValue(null, null, s, s.latitude, s.longitude)
+            }
+          } else if (this.variable === 'monoYield') {
+            if (s.data && s.components) {
+              const dataPoints = s.components.map(c => {
+                return s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mono' && d.traitName === 'Yield')
+              }).filter(c => c !== undefined && c !== null)
+
+              if (dataPoints && dataPoints.length > 0) {
+                const coords = this.getCoordinatesOnCircle({
+                  latitude: s.latitude,
+                  longitude: s.longitude
+                }, 250, dataPoints.length)
+
+                dataPoints.forEach((dp, index) => {
+                  addValue(dp.measurement, this.colors[cats.indexOf(s.components.find(c => c.id === dp.componentIds[0]).cropName.trim()) % this.colors.length], s, coords[index].latitude, coords[index].longitude)
+                })
+              }
             }
           } else if (this.variable === 'tillage' || this.variable === 'farmManagement' || this.variable === 'coverCrop') {
-            // TODO
-            value = s[this.variable]
+            const value = s[this.variable]
             if (value) {
-              color = this.colors[cats.indexOf(s[this.variable].trim()) % this.colors.length]
+              addValue(value, this.colors[cats.indexOf(s[this.variable].trim()) % this.colors.length], s, s.latitude, s.longitude)
+            } else {
+              addValue(value, null, s, s.latitude, s.longitude)
             }
           } else {
-            value = s.componentIds ? s.componentIds.length : 0
-          }
-
-          if (value !== null && !(typeof value === 'string')) {
-            min = Math.min(min, value)
-            max = Math.max(max, value)
-          }
-
-          return {
-            dataset: s,
-            value: value,
-            color: color
+            addValue(s.componentIds ? s.componentIds.length : 0, null, s, s.latitude, s.longitude)
           }
         })
 
-        // Normalize the values into the interval [0, 15]
+        // Normalize the values into the interval [10, 25]
         result.forEach(s => {
           if (typeof s.value === 'string') {
-            s.radius = 15
+            s.radius = 25
           } else {
             if (s.value !== null) {
-              s.radius = (s.value - min) * 15 / (max - min)
+              s.radius = 10 + (s.value - min) * (25 - 10) / (max - min)
             } else {
               s.radius = 0
             }
@@ -248,6 +278,17 @@ export default {
         const cats = Array.from(set)
         cats.sort()
         this.categories = cats.concat()
+      } else if (this.variable === 'monoYield') {
+        const set = new Set()
+        this.serverData
+          .filter(s => this.filterDatasetIds ? this.filterDatasetIds.includes(s.datasetId) : true) // Restrict to filtered dataset ids (if any)
+          .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180) // Restrict to valid lat/lng values
+          .filter(s => s.components)
+          .forEach(s => s.components.forEach(c => set.add(c.cropName.trim())))
+
+        const cats = Array.from(set)
+        cats.sort()
+        this.categories = cats.concat()
       } else {
         this.categories = null
       }
@@ -255,6 +296,16 @@ export default {
   },
   mixins: [api],
   methods: {
+    /**
+     * Generates a v4 UUID
+     */
+    uuidv4: function () {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0
+        const v = c === 'x' ? r : (r & 0x3 | 0x8)
+        return v.toString(16)
+      })
+    },
     getCoordinatesOnCircle: function (center, radius, count) {
       const latRadian = center.latitude * Math.PI / 180
       const lngRadian = center.longitude * Math.PI / 180
@@ -318,11 +369,6 @@ export default {
           this.serverData = null
         }
       })
-
-    console.log(this.getCoordinatesOnCircle({
-      latitude: 56.4836419,
-      longitude: -3.0703616
-    }, 1000, 1))
   }
 }
 </script>

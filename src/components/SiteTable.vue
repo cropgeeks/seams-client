@@ -2,7 +2,7 @@
   <div>
     <b-form-group label="Filter" label-for="search" class="mb-0">
       <b-input-group>
-        <b-input id="search" class="site-table-filter" type="search" :debounce="100" placeholder="Search (e.g. 'barley', 'plough' or 'organic')" v-model="filter" />
+        <b-input id="search" class="site-table-filter" type="search" :debounce="100" placeholder="Search (e.g. 'barley', 'legumes', 'plough' or 'organic')" v-model="filter" />
         <b-input-group-append is-text>
           <b-form-checkbox v-b-tooltip="'\'All\' requires ALL words in the search to occur in a dataset while \'Some\' requires at least one.'" switch v-model="isAnd">{{ isAnd ? 'All' : 'Some' }}</b-form-checkbox>
         </b-input-group-append>
