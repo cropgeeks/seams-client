@@ -1,102 +1,106 @@
 <template>
   <div>
-    <b-button-group class="color-options">
-      <b-button :pressed="variable === 'ler'" @click="variable = 'ler'"><BIconPercent /> LER</b-button>
-      <b-button :pressed="variable === 'mixYield'" @click="variable = 'mixYield'"><i class="icon-mixture" /> Mixture yield</b-button>
-      <b-button :pressed="variable === 'monoYield'" @click="variable = 'monoYield'"><i class="icon-mixture" /> Monoculture yield</b-button>
-      <b-button :pressed="variable === 'tillage'" @click="variable = 'tillage'"><i class="icon-tillage" /> Tillage</b-button>
-      <b-button :pressed="variable === 'farmManagement'" @click="variable = 'farmManagement'"><i class="icon-farm-management" /> Farm management</b-button>
-      <b-button :pressed="variable === 'coverCrop'" @click="variable = 'coverCrop'"><i class="icon-covercrop" /> Cover crop</b-button>
-    </b-button-group>
+    <template v-if="serverData">
+      <b-button-group class="color-options">
+        <!-- Variable options. Use object to generate a button for each key. Use component icon or class icon -->
+        <b-button :pressed="variable === key" @click="variable = key" v-for="(value, key) in variables" :key="`variable-${key}`">
+          <i :class="value.class" />
+          {{ value.text }}
+        </b-button>
+      </b-button-group>
 
-    <LMap ref="locationMap" :bounds="bounds" @ready="loadMap" class="map">
-      <LControl position="bottomleft" class="leaflet-control-layers" v-show="categories">
-        <div class="p-2 legend">
-          <div v-for="(category, index) in categories" :key="`color-mapping-${category}`">
-            <BIconCircleFill :style="{ color: colors[index % colors.length] }" /> {{ category }}
+      <LMap ref="locationMap" :bounds="bounds" @ready="loadMap" class="map">
+        <LControl position="bottomleft" class="leaflet-control-layers" v-if="categories && variable && categories[variable]">
+          <div class="p-2 legend">
+            <div v-for="(category, index) in categories[variable]" :key="`color-mapping-${category}`">
+              <BIconCircleFill :style="{ color: colors[index % colors.length] }" /> {{ category }}
+            </div>
           </div>
-        </div>
-      </LControl>
+        </LControl>
 
-      <LCircleMarker v-for="location in locationData"
-                     :radius="location.radius"
-                     :weight="0.25"
-                     :opacity="1"
-                     color="#f5f6fa"
-                     :fillOpacity="0.5"
-                     :fillColor="location.color || '#EA2027'"
-                     :tooltip="`${location.dataset.siteName}: ${location.value}`"
-                     :key="`marker-${location.id}`"
-                     :latLng="[location.lat, location.lng]">
-        <LPopup>
-          <h3 class="d-flex justify-content-between">
-            <span>{{ location.dataset.siteName }}</span>
-            <span v-if="location.dataset.componentNames">
-              <i :class="`icon-${component ? component.toLowerCase() : null} mx-1`" v-for="component in location.dataset.componentNames" :key="`dataset-${location.dataset.datasetId}-${component}`" v-b-tooltip="component" />
-            </span>
-          </h3>
+        <template v-if="locationData && locationData[variable]">
+          <LCircleMarker v-for="location in locationData[variable]"
+                        :radius="location.radius"
+                        :weight="0.25"
+                        :opacity="1"
+                        color="#f5f6fa"
+                        :fillOpacity="0.5"
+                        :fillColor="location.color || '#EA2027'"
+                        :tooltip="`${location.dataset.siteName}: ${location.value}`"
+                        :key="`marker-${location.id}`"
+                        :latLng="[location.lat, location.lng]">
+            <LPopup>
+              <h3 class="d-flex justify-content-between">
+                <span>{{ location.dataset.siteName }}</span>
+                <span v-if="location.dataset.componentNames">
+                  <i :class="`icon-${component ? component.toLowerCase() : null} mx-1`" v-for="component in location.dataset.componentNames" :key="`dataset-${location.dataset.datasetId}-${component}`" />
+                </span>
+              </h3>
 
-          <b-row>
-            <b-col cols=12 md=3 class="mb-3">
-              <b-card class="text-center h-100">
-                <b-card-title><i class="icon-farm-management"/></b-card-title>
-                <b-card-sub-title>Farm management</b-card-sub-title>
-                <b-card-text>{{ location.dataset.farmManagement }}</b-card-text>
-              </b-card>
-            </b-col>
-            <b-col cols=12 md=3 class="mb-3">
-              <b-card class="text-center h-100">
-                <b-card-title><i class="icon-tillage"/></b-card-title>
-                <b-card-sub-title>Tillage</b-card-sub-title>
-                <b-card-text>{{ location.dataset.tillage }}</b-card-text>
-              </b-card>
-            </b-col>
-            <b-col cols=12 md=3 class="mb-3">
-              <b-card class="text-center h-100">
-                <b-card-title><i class="icon-fertilizer"/></b-card-title>
-                <b-card-sub-title>Fertiliser</b-card-sub-title>
-                <b-card-text>{{ location.dataset.fertilizer }}</b-card-text>
-              </b-card>
-            </b-col>
-            <b-col cols=12 md=3 class="mb-3">
-              <b-card class="text-center h-100">
-                <b-card-title><i class="icon-covercrop"/></b-card-title>
-                <b-card-sub-title>Cover crop</b-card-sub-title>
-                <b-card-text>{{ location.dataset.coverCrop }}</b-card-text>
-              </b-card>
-            </b-col>
-            <b-col cols=12 md=3 class="mb-3">
-              <b-card class="text-center h-100">
-                <b-card-title><i class="icon-weed-cover"/></b-card-title>
-                <b-card-sub-title>Weed cover</b-card-sub-title>
-                <b-card-text>{{ location.dataset.weedCover }}</b-card-text>
-              </b-card>
-            </b-col>
-            <b-col cols=12 md=3 class="mb-3" v-if="location.dataset.sowingDate">
-              <b-card class="text-center h-100">
-                <b-card-title><i class="icon-sowing-date"/></b-card-title>
-                <b-card-sub-title>Sowing date</b-card-sub-title>
-                <b-card-text>{{ new Date(location.dataset.sowingDate).toLocaleDateString() }}</b-card-text>
-              </b-card>
-            </b-col>
-            <b-col cols=12 md=3 class="mb-3" v-if="location.dataset.harvestDate">
-              <b-card class="text-center h-100">
-                <b-card-title><i class="icon-harvest-date"/></b-card-title>
-                <b-card-sub-title>Harvest date</b-card-sub-title>
-                <b-card-text>{{ new Date(location.dataset.harvestDate).toLocaleDateString() }}</b-card-text>
-              </b-card>
-            </b-col>
-            <b-col cols=12 md=3 class="mb-3">
-              <b-card class="text-center h-100">
-                <b-card-title><i class="icon-value"/></b-card-title>
-                <b-card-sub-title>{{ variable }}</b-card-sub-title>
-                <b-card-text>{{ (typeof location.value === 'string') ? location.value : location.value.toFixed(2) }}</b-card-text>
-              </b-card>
-            </b-col>
-          </b-row>
-        </LPopup>
-      </LCircleMarker>
-    </LMap>
+              <b-row>
+                <b-col cols=12 md=3 class="mb-3">
+                  <b-card class="text-center h-100">
+                    <b-card-title><i class="icon-farm-management"/></b-card-title>
+                    <b-card-sub-title>Farm management</b-card-sub-title>
+                    <b-card-text>{{ location.dataset.farmManagement }}</b-card-text>
+                  </b-card>
+                </b-col>
+                <b-col cols=12 md=3 class="mb-3">
+                  <b-card class="text-center h-100">
+                    <b-card-title><i class="icon-tillage"/></b-card-title>
+                    <b-card-sub-title>Tillage</b-card-sub-title>
+                    <b-card-text>{{ location.dataset.tillage }}</b-card-text>
+                  </b-card>
+                </b-col>
+                <b-col cols=12 md=3 class="mb-3">
+                  <b-card class="text-center h-100">
+                    <b-card-title><i class="icon-fertilizer"/></b-card-title>
+                    <b-card-sub-title>Fertiliser</b-card-sub-title>
+                    <b-card-text>{{ location.dataset.fertilizer }}</b-card-text>
+                  </b-card>
+                </b-col>
+                <b-col cols=12 md=3 class="mb-3">
+                  <b-card class="text-center h-100">
+                    <b-card-title><i class="icon-covercrop"/></b-card-title>
+                    <b-card-sub-title>Cover crop</b-card-sub-title>
+                    <b-card-text>{{ location.dataset.coverCrop }}</b-card-text>
+                  </b-card>
+                </b-col>
+                <b-col cols=12 md=3 class="mb-3">
+                  <b-card class="text-center h-100">
+                    <b-card-title><i class="icon-weed-cover"/></b-card-title>
+                    <b-card-sub-title>Weed cover</b-card-sub-title>
+                    <b-card-text>{{ location.dataset.weedCover }}</b-card-text>
+                  </b-card>
+                </b-col>
+                <b-col cols=12 md=3 class="mb-3" v-if="location.dataset.sowingDate">
+                  <b-card class="text-center h-100">
+                    <b-card-title><i class="icon-sowing-date"/></b-card-title>
+                    <b-card-sub-title>Sowing date</b-card-sub-title>
+                    <b-card-text>{{ new Date(location.dataset.sowingDate).toLocaleDateString() }}</b-card-text>
+                  </b-card>
+                </b-col>
+                <b-col cols=12 md=3 class="mb-3" v-if="location.dataset.harvestDate">
+                  <b-card class="text-center h-100">
+                    <b-card-title><i class="icon-harvest-date"/></b-card-title>
+                    <b-card-sub-title>Harvest date</b-card-sub-title>
+                    <b-card-text>{{ new Date(location.dataset.harvestDate).toLocaleDateString() }}</b-card-text>
+                  </b-card>
+                </b-col>
+                <b-col cols=12 md=3 class="mb-3" v-if="['ler', 'monoYield', 'mixYield'].includes(variable)">
+                  <b-card class="text-center h-100">
+                    <b-card-title><i class="icon-value"/></b-card-title>
+                    <b-card-sub-title>{{ variables[variable].text }}</b-card-sub-title>
+                    <b-card-text>{{ (typeof location.value === 'string') ? location.value : location.value.toFixed(2) }}</b-card-text>
+                  </b-card>
+                </b-col>
+              </b-row>
+            </LPopup>
+          </LCircleMarker>
+        </template>
+      </LMap>
+    </template>
+    <LoadingIndicator v-else />
   </div>
 </template>
 
@@ -104,7 +108,8 @@
 import api from '@/mixins/api'
 import L from 'leaflet'
 import { LMap, LCircleMarker, LControl, LPopup } from 'vue2-leaflet'
-import { BIconPercent, BIconCircleFill } from 'bootstrap-vue'
+import { BIconCircleFill } from 'bootstrap-vue'
+import LoadingIndicator from '@/components/LoadingIndicator'
 
 import 'leaflet/dist/leaflet.css'
 
@@ -114,8 +119,8 @@ export default {
     LCircleMarker,
     LControl,
     LPopup,
-    BIconPercent,
-    BIconCircleFill
+    BIconCircleFill,
+    LoadingIndicator
   },
   data: function () {
     return {
@@ -123,179 +128,186 @@ export default {
       variable: 'ler',
       filterDatasetIds: null,
       colors: ['#00a0f1', '#5ec418', '#910080', '#222183', '#ff7c00', '#c5e000', '#c83831', '#ff007a', '#fff600'],
-      categories: null
+      categories: null,
+      locationData: null,
+      variables: {
+        ler: { text: 'LER', class: 'icon-ler' },
+        mixYield: { text: 'Mixture yield', class: 'icon-mixture' },
+        monoYield: { text: 'Monoculture yield', class: 'icon-monoculture' },
+        tillage: { text: 'Tillage', class: 'icon-tillage' },
+        farmManagement: { text: 'Farm management', class: 'icon-farm-management' },
+        coverCrop: { text: 'Cover crop', class: 'icon-covercrop' }
+      }
     }
   },
   computed: {
     bounds: function () {
       const b = L.latLngBounds()
 
-      this.locationData.forEach(l => b.extend([l.dataset.latitude, l.dataset.longitude]))
+      if (this.locationData && this.variable && this.locationData[this.variable]) {
+        this.locationData[this.variable].forEach(l => b.extend([l.dataset.latitude, l.dataset.longitude]))
+      }
 
       if (b.isValid()) {
         return b.pad(0.1)
       } else {
         return null
       }
-    },
-    locationData: function () {
-      if (this.serverData) {
-        let max = 0
-        let min = 0
-
-        let cats = []
-
-        const filteredData = this.serverData
-          .filter(s => this.filterDatasetIds ? this.filterDatasetIds.includes(s.datasetId) : true) // Restrict to filtered dataset ids (if any)
-          .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180) // Restrict to valid lat/lng values
-
-        if (this.variable === 'tillage' || this.variable === 'farmManagement' || this.variable === 'coverCrop') {
-          const set = new Set()
-
-          filteredData.filter(s => s[this.variable])
-            .forEach(t => set.add(t[this.variable].trim()))
-
-          cats = Array.from(set)
-          cats.sort()
-        } else if (this.variable === 'monoYield') {
-          const set = new Set()
-
-          filteredData.filter(ds => ds.components).forEach(ds => ds.components.forEach(c => set.add(c.cropName.trim())))
-
-          cats = Array.from(set)
-          cats.sort()
-        }
-
-        const result = []
-
-        filteredData.forEach(s => {
-          const addValue = (value, color, dataset, lat, lng) => {
-            result.push({
-              lat: lat,
-              lng: lng,
-              dataset: dataset,
-              value: value,
-              color: color,
-              id: this.uuidv4()
-            })
-
-            if (value !== null && !(typeof value === 'string')) {
-              min = Math.min(min, value)
-              max = Math.max(max, value)
-            }
-          }
-
-          if (this.variable === 'ler') {
-            // Calculate the LER
-            if (s.data && s.components) {
-              // Reduce across all components by summing up
-              const value = s.components.map(c => {
-                // Get their yield inside the monoculture and mixture
-                const monoYield = s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mono' && d.traitName === 'Yield')
-                const mixYield = s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mix' && d.traitName === 'Yield')
-
-                if (monoYield !== undefined && mixYield !== undefined) {
-                  // If both are defined, return the ratio
-                  return mixYield.measurement / monoYield.measurement
-                } else {
-                  return null
-                }
-              })
-                .filter(a => a !== null)
-                .reduce((a, b) => a + b, 0)
-
-              addValue(value, this.colors[2], s, s.latitude, s.longitude)
-            } else {
-              addValue(0, null, s, s.latitude, s.longitude)
-            }
-          } else if (this.variable === 'mixYield') {
-            const mixYield = s.data.find(d => d.componentIds.length === s.components.length && d.traitName === 'Yield')
-
-            if (mixYield !== undefined) {
-              addValue(mixYield.measurement, this.colors[2], s, s.latitude, s.longitude)
-            } else {
-              addValue(null, null, s, s.latitude, s.longitude)
-            }
-          } else if (this.variable === 'monoYield') {
-            if (s.data && s.components) {
-              const dataPoints = s.components.map(c => {
-                return s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mono' && d.traitName === 'Yield')
-              }).filter(c => c !== undefined && c !== null)
-
-              if (dataPoints && dataPoints.length > 0) {
-                const coords = this.getCoordinatesOnCircle({
-                  latitude: s.latitude,
-                  longitude: s.longitude
-                }, 250, dataPoints.length)
-
-                dataPoints.forEach((dp, index) => {
-                  addValue(dp.measurement, this.colors[cats.indexOf(s.components.find(c => c.id === dp.componentIds[0]).cropName.trim()) % this.colors.length], s, coords[index].latitude, coords[index].longitude)
-                })
-              }
-            }
-          } else if (this.variable === 'tillage' || this.variable === 'farmManagement' || this.variable === 'coverCrop') {
-            const value = s[this.variable]
-            if (value) {
-              addValue(value, this.colors[cats.indexOf(s[this.variable].trim()) % this.colors.length], s, s.latitude, s.longitude)
-            } else {
-              addValue(value, null, s, s.latitude, s.longitude)
-            }
-          } else {
-            addValue(s.componentIds ? s.componentIds.length : 0, null, s, s.latitude, s.longitude)
-          }
-        })
-
-        // Normalize the values into the interval [10, 25]
-        result.forEach(s => {
-          if (typeof s.value === 'string') {
-            s.radius = 25
-          } else {
-            if (s.value !== null) {
-              s.radius = 10 + (s.value - min) * (25 - 10) / (max - min)
-            } else {
-              s.radius = 0
-            }
-          }
-        })
-
-        return result
-          .filter(l => l.value)
-      } else {
-        return []
-      }
     }
   },
   watch: {
-    locationData: function () {
-      if (this.variable === 'tillage' || this.variable === 'farmManagement' || this.variable === 'coverCrop') {
-        const set = new Set()
-        this.serverData
-          .filter(s => this.filterDatasetIds ? this.filterDatasetIds.includes(s.datasetId) : true) // Restrict to filtered dataset ids (if any)
-          .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180) // Restrict to valid lat/lng values
-          .filter(s => s[this.variable])
-          .forEach(t => set.add(t[this.variable].trim()))
-
-        const cats = Array.from(set)
-        cats.sort()
-        this.categories = cats.concat()
-      } else if (this.variable === 'monoYield') {
-        const set = new Set()
-        this.serverData
-          .filter(s => this.filterDatasetIds ? this.filterDatasetIds.includes(s.datasetId) : true) // Restrict to filtered dataset ids (if any)
-          .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180) // Restrict to valid lat/lng values
-          .filter(s => s.components)
-          .forEach(s => s.components.forEach(c => set.add(c.cropName.trim())))
-
-        const cats = Array.from(set)
-        cats.sort()
-        this.categories = cats.concat()
-      } else {
-        this.categories = null
-      }
+    serverData: function () {
+      this.update()
+    },
+    filterDatasetIds: function () {
+      this.update()
     }
   },
   mixins: [api],
   methods: {
+    update: function () {
+      if (this.serverData) {
+        const mapping = {}
+        const categoryMapping = {}
+        Object.keys(this.variables).forEach(variableKey => {
+          let max = 0
+          let min = 0
+
+          let cats = []
+
+          const filteredData = this.serverData
+            .filter(s => this.filterDatasetIds ? this.filterDatasetIds.includes(s.datasetId) : true) // Restrict to filtered dataset ids (if any)
+            .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180) // Restrict to valid lat/lng values
+
+          if (variableKey === 'tillage' || variableKey === 'farmManagement' || variableKey === 'coverCrop') {
+            const set = new Set()
+
+            filteredData.filter(s => s[variableKey])
+              .forEach(t => set.add(t[variableKey].trim()))
+
+            cats = Array.from(set)
+            cats.sort()
+
+            categoryMapping[variableKey] = cats.concat()
+          } else if (variableKey === 'monoYield') {
+            const set = new Set()
+
+            filteredData.filter(ds => ds.components).forEach(ds => ds.components.forEach(c => set.add(c.cropName.trim())))
+
+            cats = Array.from(set)
+            cats.sort()
+
+            categoryMapping[variableKey] = cats.concat()
+          } else {
+            categoryMapping[variableKey] = null
+          }
+
+          let result = []
+
+          filteredData.forEach(s => {
+            const addValue = (value, color, dataset, lat, lng) => {
+              result.push({
+                lat: lat,
+                lng: lng,
+                dataset: dataset,
+                value: value,
+                color: color,
+                id: this.uuidv4()
+              })
+
+              if (value !== null && !(typeof value === 'string')) {
+                min = Math.min(min, value)
+                max = Math.max(max, value)
+              }
+            }
+
+            if (variableKey === 'ler') {
+              // Calculate the LER
+              if (s.data && s.components) {
+                // Reduce across all components by summing up
+                const value = s.components.map(c => {
+                  // Get their yield inside the monoculture and mixture
+                  const monoYield = s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mono' && d.traitName === 'Yield')
+                  const mixYield = s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mix' && d.traitName === 'Yield')
+
+                  if (monoYield !== undefined && mixYield !== undefined) {
+                    // If both are defined, return the ratio
+                    return mixYield.measurement / monoYield.measurement
+                  } else {
+                    return null
+                  }
+                })
+                  .filter(a => a !== null)
+                  .reduce((a, b) => a + b, 0)
+
+                addValue(value, this.colors[2], s, s.latitude, s.longitude)
+              } else {
+                addValue(0, null, s, s.latitude, s.longitude)
+              }
+            } else if (variableKey === 'mixYield') {
+              const mixYield = s.data.find(d => d.componentIds.length === s.components.length && d.traitName === 'Yield')
+
+              if (mixYield !== undefined) {
+                addValue(mixYield.measurement, this.colors[2], s, s.latitude, s.longitude)
+              } else {
+                addValue(null, null, s, s.latitude, s.longitude)
+              }
+            } else if (variableKey === 'monoYield') {
+              if (s.data && s.components) {
+                const dataPoints = s.components.map(c => {
+                  return s.data.find(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(c.id) && d.measurementType === 'mono' && d.traitName === 'Yield')
+                }).filter(c => c !== undefined && c !== null)
+
+                if (dataPoints && dataPoints.length > 0) {
+                  const coords = this.getCoordinatesOnCircle({
+                    latitude: s.latitude,
+                    longitude: s.longitude
+                  }, 250, dataPoints.length)
+
+                  dataPoints.forEach((dp, index) => {
+                    addValue(dp.measurement, this.colors[cats.indexOf(s.components.find(c => c.id === dp.componentIds[0]).cropName.trim()) % this.colors.length], s, coords[index].latitude, coords[index].longitude)
+                  })
+                }
+              }
+            } else if (variableKey === 'tillage' || variableKey === 'farmManagement' || variableKey === 'coverCrop') {
+              const value = s[variableKey]
+              if (value) {
+                addValue(value, this.colors[cats.indexOf(s[variableKey].trim()) % this.colors.length], s, s.latitude, s.longitude)
+              } else {
+                addValue(value, null, s, s.latitude, s.longitude)
+              }
+            } else {
+              addValue(s.componentIds ? s.componentIds.length : 0, null, s, s.latitude, s.longitude)
+            }
+          })
+
+          // Normalize the values into the interval [10, 25]
+          result.forEach(s => {
+            if (typeof s.value === 'string') {
+              s.radius = 25
+            } else {
+              if (s.value !== null) {
+                s.radius = 10 + (s.value - min) * (25 - 10) / (max - min)
+              } else {
+                s.radius = 0
+              }
+            }
+          })
+
+          result = result.filter(l => l.value)
+          Object.freeze(result)
+          mapping[variableKey] = result
+        })
+
+        Object.freeze(mapping)
+        this.locationData = mapping
+
+        Object.freeze(categoryMapping)
+        this.categories = categoryMapping
+      } else {
+        return {}
+      }
+    },
     /**
      * Generates a v4 UUID
      */

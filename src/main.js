@@ -26,7 +26,8 @@ import {
   InputGroupPlugin,
   TooltipPlugin,
   TablePlugin,
-  PaginationPlugin
+  PaginationPlugin,
+  ProgressPlugin
 } from 'bootstrap-vue'
 
 Vue.use(LayoutPlugin)
@@ -49,6 +50,7 @@ Vue.use(InputGroupPlugin)
 Vue.use(TooltipPlugin)
 Vue.use(TablePlugin)
 Vue.use(PaginationPlugin)
+Vue.use(ProgressPlugin)
 
 require('es6-promise/auto')
 

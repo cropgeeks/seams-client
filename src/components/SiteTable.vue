@@ -1,109 +1,114 @@
 <template>
   <div>
-    <b-form-group label="Filter" label-for="search" class="mb-0">
-      <b-input-group>
-        <b-input id="search" class="site-table-filter" type="search" :debounce="100" placeholder="Search (e.g. 'barley', 'legumes', 'plough' or 'organic')" v-model="filter" />
-        <b-input-group-append is-text>
-          <b-form-checkbox v-b-tooltip="'\'All\' requires ALL words in the search to occur in a dataset while \'Some\' requires at least one.'" switch v-model="isAnd">{{ isAnd ? 'All' : 'Some' }}</b-form-checkbox>
-        </b-input-group-append>
-      </b-input-group>
-    </b-form-group>
-    <b-table id="dataset-table"
-             :items="serverData"
-             :fields="columns"
-             :filter="filter"
-             :filter-function="filterTable"
-             :per-page="perPage"
-             :current-page="currentPage"
-             @filtered="updateItemCount"
-             head-variant="dark"
-             primary-key="datasetId"
-             show-empty
-             sort-null-last
-             :sort-compare-options="{ numeric: true, ignorePunctuation: true }"
-             responsive
-             striped
-             hover
-             class="site-table" >
-      <template #cell(components)="data">
-        <b-button size="sm" :variant="data.item.components ? 'primary' : 'secondary'" class="mr-2" @click="data.toggleDetails" :disabled="!data.item.components">
-          <i class="icon-mixture" />
-        </b-button>
-        <template v-if="data.item.componentNames">
-          <i :class="`icon-${component ? component.toLowerCase() : null} mx-1`" v-for="component in data.item.componentNames" :key="`row-${data.index}-${component}`" v-b-tooltip="component" />
+    <template v-if="serverData">
+      <b-form-group label="Filter" label-for="search" class="mb-0">
+        <b-input-group>
+          <b-input id="search" class="site-table-filter" type="search" :debounce="100" placeholder="Search (e.g. 'barley', 'legumes', 'plough' or 'organic')" v-model="filter" />
+          <b-input-group-append is-text>
+            <b-form-checkbox v-b-tooltip="'\'All\' requires ALL words in the search to occur in a dataset while \'Some\' requires at least one.'" switch v-model="isAnd">{{ isAnd ? 'All' : 'Some' }}</b-form-checkbox>
+          </b-input-group-append>
+        </b-input-group>
+      </b-form-group>
+      <b-table id="dataset-table"
+              :items="serverData"
+              :fields="columns"
+              :filter="filter"
+              :filter-function="filterTable"
+              :per-page="perPage"
+              :current-page="currentPage"
+              @filtered="updateItemCount"
+              head-variant="dark"
+              primary-key="datasetId"
+              show-empty
+              sort-null-last
+              :sort-compare-options="{ numeric: true, ignorePunctuation: true }"
+              responsive
+              striped
+              hover
+              class="site-table" >
+        <template #cell(components)="data">
+          <div class="d-flex justify-content-start align-items-start">
+            <b-button size="sm" :variant="data.item.components ? 'primary' : 'secondary'" class="mr-2" @click="data.toggleDetails" :disabled="!data.item.components">
+              <i class="icon-mixture" />
+            </b-button>
+            <div v-if="data.item.componentNames" class="component-icons">
+              <i :class="`icon-${component ? component.toLowerCase() : null} mx-1 mb-1`" v-for="component in data.item.componentNames" :key="`row-${data.index}-${component}`" v-b-tooltip="component" />
+            </div>
+          </div>
         </template>
-      </template>
-      <template #cell(fertilizer)="data">
-        <span class="text-nowrap">
-          <i :class="{ 'icon-fertilizer': true, disabled: !data.item.fertilizer }" />
-          <span v-if="data.item.fertilizer" class="ml-2 text-preview" v-b-tooltip="data.item.fertilizer">{{ data.item.fertilizer }}</span>
-        </span>
-      </template>
-      <template #cell(tillage)="data">
-        <span class="text-nowrap">
-          <i :class="{ 'icon-tillage': true, disabled: !data.item.tillage }" />
-          <span v-if="data.item.tillage" class="ml-2 text-preview" v-b-tooltip="data.item.tillage">{{ data.item.tillage }}</span>
-        </span>
-      </template>
-      <template #cell(farmManagement)="data">
-        <span class="text-nowrap">
-          <i :class="{ 'icon-farm-management': true, disabled: !data.item.farmManagement }" />
-          <span v-if="data.item.farmManagement" class="ml-2 text-preview" v-b-tooltip="data.item.farmManagement">{{ data.item.farmManagement }}</span>
-        </span>
-      </template>
-      <template #cell(coverCrop)="data">
-        <span class="text-nowrap">
-          <i :class="{ 'icon-covercrop': true, disabled: !data.item.coverCrop }" />
-          <span v-if="data.item.coverCrop" class="ml-2 text-preview" v-b-tooltip="data.item.coverCrop">{{ data.item.coverCrop }}</span>
-        </span>
-      </template>
-      <template #cell(weedCover)="data">
-        <span class="text-nowrap">
-          <i :class="{ 'icon-weed-cover': true, disabled: !data.item.weedCover }" />
-          <span v-if="data.item.weedCover" class="ml-2 text-preview" v-b-tooltip="data.item.weedCover">{{ data.item.weedCover }}</span>
-        </span>
-      </template>
-      <template #cell(sowingDate)="data">
-        <span class="text-nowrap">
-          <i :class="{ 'icon-sowing-date': true, disabled: !data.item.sowingDate }" />
-          <span v-if="data.item.sowingDate" class="ml-2 text-preview">{{ new Date(data.item.sowingDate).toLocaleDateString() }}</span>
-        </span>
-      </template>
-      <template #cell(harvestDate)="data">
-        <span class="text-nowrap">
-          <i :class="{ 'icon-harvest-date': true, disabled: !data.item.harvestDate }" />
-          <span v-if="data.item.harvestDate" class="ml-2 text-preview">{{ new Date(data.item.harvestDate).toLocaleDateString() }}</span>
-        </span>
-      </template>
+        <template #cell(fertilizer)="data">
+          <span class="text-nowrap">
+            <i :class="{ 'icon-fertilizer': true, disabled: !data.item.fertilizer }" />
+            <span v-if="data.item.fertilizer" class="ml-2 text-preview" v-b-tooltip="data.item.fertilizer">{{ data.item.fertilizer }}</span>
+          </span>
+        </template>
+        <template #cell(tillage)="data">
+          <span class="text-nowrap">
+            <i :class="{ 'icon-tillage': true, disabled: !data.item.tillage }" />
+            <span v-if="data.item.tillage" class="ml-2 text-preview" v-b-tooltip="data.item.tillage">{{ data.item.tillage }}</span>
+          </span>
+        </template>
+        <template #cell(farmManagement)="data">
+          <span class="text-nowrap">
+            <i :class="{ 'icon-farm-management': true, disabled: !data.item.farmManagement }" />
+            <span v-if="data.item.farmManagement" class="ml-2 text-preview" v-b-tooltip="data.item.farmManagement">{{ data.item.farmManagement }}</span>
+          </span>
+        </template>
+        <template #cell(coverCrop)="data">
+          <span class="text-nowrap">
+            <i :class="{ 'icon-covercrop': true, disabled: !data.item.coverCrop }" />
+            <span v-if="data.item.coverCrop" class="ml-2 text-preview" v-b-tooltip="data.item.coverCrop">{{ data.item.coverCrop }}</span>
+          </span>
+        </template>
+        <template #cell(weedCover)="data">
+          <span class="text-nowrap">
+            <i :class="{ 'icon-weed-cover': true, disabled: !data.item.weedCover }" />
+            <span v-if="data.item.weedCover" class="ml-2 text-preview" v-b-tooltip="data.item.weedCover">{{ data.item.weedCover }}</span>
+          </span>
+        </template>
+        <template #cell(sowingDate)="data">
+          <span class="text-nowrap">
+            <i :class="{ 'icon-sowing-date': true, disabled: !data.item.sowingDate }" />
+            <span v-if="data.item.sowingDate" class="ml-2 text-preview">{{ new Date(data.item.sowingDate).toLocaleDateString() }}</span>
+          </span>
+        </template>
+        <template #cell(harvestDate)="data">
+          <span class="text-nowrap">
+            <i :class="{ 'icon-harvest-date': true, disabled: !data.item.harvestDate }" />
+            <span v-if="data.item.harvestDate" class="ml-2 text-preview">{{ new Date(data.item.harvestDate).toLocaleDateString() }}</span>
+          </span>
+        </template>
 
-      <template #row-details="data">
-        <b-row>
-          <b-col cols=12 sm=6 md=4 v-for="component in data.item.components" :key="`ds-${data.item.datasetId}-comp-${component.id}`">
-            <b-card class="mb-3">
-              <b-card-title>
-                <i :class="`icon-${component.cropName.toLowerCase()}`" /> {{ component.cropName }} - {{ component.varietyName }}
-              </b-card-title>
-              <ul>
-                <li v-for="datum in data.item.data.filter(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(component.id))" :key="`measurement-${datum.measurementId}`">
-                  {{ datum.traitName }} - {{ datum.measurementType }}: {{ datum.measurement }} {{ datum.traitUnitName }}
-                </li>
-              </ul>
-            </b-card>
-          </b-col>
-        </b-row>
-      </template>
-    </b-table>
+        <template #row-details="data">
+          <b-row>
+            <b-col cols=12 sm=6 md=4 v-for="component in data.item.components" :key="`ds-${data.item.datasetId}-comp-${component.id}`">
+              <b-card class="mb-3">
+                <b-card-title>
+                  <i :class="`icon-${component.cropName.toLowerCase()}`" /> {{ component.cropName }} - {{ component.varietyName }}
+                </b-card-title>
+                <ul>
+                  <li v-for="datum in data.item.data.filter(d => d.componentIds && d.componentIds.length === 1 && d.componentIds.includes(component.id))" :key="`measurement-${datum.measurementId}`">
+                    {{ datum.traitName }} - {{ datum.measurementType }}: {{ datum.measurement }} {{ datum.traitUnitName }}
+                  </li>
+                </ul>
+              </b-card>
+            </b-col>
+          </b-row>
+        </template>
+      </b-table>
 
-    <b-pagination
-      v-model="currentPage"
-      :total-rows="itemCount"
-      :per-page="perPage"
-      aria-controls="dataset-table"
-    ></b-pagination>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="itemCount"
+        :per-page="perPage"
+        aria-controls="dataset-table"
+      ></b-pagination>
 
-    <div class="text-center">
-      <b-button variant="primary" @click="$emit('datasets-changed', filteredDatasetIds)"><BIconArrowDownSquareFill /> Update map using filter</b-button>
-    </div>
+      <div class="text-center">
+        <b-button variant="primary" @click="$emit('datasets-changed', filteredDatasetIds)"><BIconArrowDownSquareFill /> Update map using filter</b-button>
+      </div>
+    </template>
+    <LoadingIndicator v-else />
   </div>
 </template>
 
@@ -112,9 +117,12 @@ import api from '@/mixins/api'
 
 import { BIconArrowDownSquareFill } from 'bootstrap-vue'
 
+import LoadingIndicator from '@/components/LoadingIndicator'
+
 export default {
   components: {
-    BIconArrowDownSquareFill
+    BIconArrowDownSquareFill,
+    LoadingIndicator
   },
   data: function () {
     return {
@@ -231,6 +239,9 @@ export default {
 }
 .site-table i.disabled {
   opacity: 0.2;
+}
+.site-table .component-icons {
+  min-width: 110px;
 }
 .text-preview {
   display: inline-block;
