@@ -99,7 +99,7 @@ i.icon-value {
 i.icon-ler {
   background-image: url("~@/assets/img/ler.svg");
 }
-i.icon-covercrop {
+i.icon-croppurpose {
   background-image: url("~@/assets/img/covercrop.svg");
 }
 i.icon-mixture {

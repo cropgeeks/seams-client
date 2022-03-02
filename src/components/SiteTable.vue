@@ -54,10 +54,10 @@
             <span v-if="data.item.farmManagement" class="ml-2 text-preview" v-b-tooltip="data.item.farmManagement">{{ data.item.farmManagement }}</span>
           </span>
         </template>
-        <template #cell(coverCrop)="data">
+        <template #cell(cropPurpose)="data">
           <span class="text-nowrap">
-            <i :class="{ 'icon-covercrop': true, disabled: !data.item.coverCrop }" />
-            <span v-if="data.item.coverCrop" class="ml-2 text-preview" v-b-tooltip="data.item.coverCrop">{{ data.item.coverCrop }}</span>
+            <i :class="{ 'icon-croppurpose': true, disabled: !data.item.cropPurpose }" />
+            <span v-if="data.item.cropPurpose" class="ml-2 text-preview" v-b-tooltip="data.item.cropPurpose">{{ data.item.cropPurpose }}</span>
           </span>
         </template>
         <template #cell(weedCover)="data">
@@ -149,7 +149,7 @@ export default {
         { key: 'fertilizer', label: 'Fertilizer', sortable: true },
         { key: 'tillage', label: 'Tillage', sortable: true },
         { key: 'farmManagement', label: 'Farm management', sortable: true },
-        { key: 'coverCrop', label: 'Cover crop', sortable: true },
+        { key: 'cropPurpose', label: 'Crop purpose', sortable: true },
         { key: 'weedCover', label: 'Weed cover', sortable: true },
         { key: 'sowingDate', label: 'Sowing date', sortable: true },
         { key: 'harvestDate', label: 'Harvest date', sortable: true }

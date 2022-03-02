@@ -61,9 +61,9 @@
                 </b-col>
                 <b-col cols=12 md=3 class="mb-3">
                   <b-card class="text-center h-100">
-                    <b-card-title><i class="icon-covercrop"/></b-card-title>
+                    <b-card-title><i class="icon-croppurpose"/></b-card-title>
                     <b-card-sub-title>Cover crop</b-card-sub-title>
-                    <b-card-text>{{ location.dataset.coverCrop }}</b-card-text>
+                    <b-card-text>{{ location.dataset.croppurpose }}</b-card-text>
                   </b-card>
                 </b-col>
                 <b-col cols=12 md=3 class="mb-3">
@@ -136,7 +136,7 @@ export default {
         monoYield: { text: 'Monoculture yield', class: 'icon-monoculture' },
         tillage: { text: 'Tillage', class: 'icon-tillage' },
         farmManagement: { text: 'Farm management', class: 'icon-farm-management' },
-        coverCrop: { text: 'Cover crop', class: 'icon-covercrop' }
+        cropPurpose: { text: 'Crop purpose', class: 'icon-croppurpose' }
       }
     }
   },
@@ -179,7 +179,7 @@ export default {
             .filter(s => this.filterDatasetIds ? this.filterDatasetIds.includes(s.datasetId) : true) // Restrict to filtered dataset ids (if any)
             .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180) // Restrict to valid lat/lng values
 
-          if (variableKey === 'tillage' || variableKey === 'farmManagement' || variableKey === 'coverCrop') {
+          if (variableKey === 'tillage' || variableKey === 'farmManagement' || variableKey === 'cropPurpose') {
             const set = new Set()
 
             filteredData.filter(s => s[variableKey])
@@ -269,7 +269,7 @@ export default {
                   })
                 }
               }
-            } else if (variableKey === 'tillage' || variableKey === 'farmManagement' || variableKey === 'coverCrop') {
+            } else if (variableKey === 'tillage' || variableKey === 'farmManagement' || variableKey === 'cropPurpose') {
               const value = s[variableKey]
               if (value) {
                 addValue(value, this.colors[cats.indexOf(s[variableKey].trim()) % this.colors.length], s, s.latitude, s.longitude)
