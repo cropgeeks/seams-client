@@ -5,7 +5,7 @@ LABEL maintainer="sebastian.raubach@hutton.ac.uk"
 ARG BRANCH=master
 
 # Force docker to not cache the next line
-ADD https://api.github.com/repos/cropgeeks/seams-client/git/refs/heads/master version.json
+ADD https://api.github.com/repos/cropgeeks/seams-client/git/refs/heads/main version.json
 # Clone the GridScore server code and client code
 RUN echo "Pulling GitHub branch: $BRANCH"
 RUN apk add --no-cache git && \
