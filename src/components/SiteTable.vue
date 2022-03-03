@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid class="mt-3">
+  <div>
     <template v-if="serverData">
       <b-form-group label="Filter" label-for="search" class="mb-0">
         <b-input-group>
@@ -121,7 +121,7 @@
       </div>
     </template>
     <LoadingIndicator v-else />
-  </b-container>
+  </div>
 </template>
 
 <script>

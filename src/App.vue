@@ -26,7 +26,9 @@
     </b-navbar>
 
     <!-- The main content -->
-    <router-view :key="$route.path" />
+    <b-container fluid class="mt-3">
+      <router-view :key="$route.path" />
+    </b-container>
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid class="mt-3">
+  <div>
     <template v-if="serverData">
       <b-button-group class="color-options">
         <!-- Variable options. Use object to generate a button for each key. Use component icon or class icon -->
@@ -101,7 +101,7 @@
       </LMap>
     </template>
     <LoadingIndicator v-else />
-  </b-container>
+  </div>
 </template>
 
 <script>
