@@ -40,6 +40,11 @@ export default {
     return {
       variableOne: null,
       variableTwo: null,
+      variableTypes: {
+        fertilizer: 'yesNo',
+        herbicide: 'yesNo',
+        weed_cover: 'categorical'
+      },
       colorByOptions: [
         { value: null, text: 'Select colouring option' },
         { value: 'dataset_name', text: 'Dataset' },
@@ -47,6 +52,7 @@ export default {
         { value: 'tillage', text: 'Tillage' },
         { value: 'dataset_name', text: 'Dataset' },
         { value: 'fertilizer', text: 'Fertilizer' },
+        { value: 'herbicide', text: 'Herbicide' },
         { value: 'farm_management', text: 'Farm Management' },
         { value: 'dataset_name', text: 'Dataset' },
         { value: 'weed_cover', text: 'Weed cover' },
@@ -86,12 +92,16 @@ export default {
       this.$plotly.purge(this.$refs.chart)
 
       if (this.variableOne && this.variableTwo && this.plotData) {
+        const vOneType = this.variableTypes[this.variableOne] || null
+        const vTwoType = this.variableTypes[this.variableTwo] || null
+        const vCatType = this.variableTypes[this.colorBy] || null
+
         let cats = []
 
         if (this.colorBy) {
           const categories = new Set()
 
-          var unpacked = this.plotlyUnpack(this.plotData, this.colorBy)
+          var unpacked = this.plotlyUnpack(this.plotData, this.colorBy, vCatType)
           for (let i = 0; i < unpacked.length; i++) {
             if (unpacked[i] !== undefined && unpacked[i] !== null) {
               if (typeof unpacked[i] === 'string') {
@@ -110,8 +120,8 @@ export default {
         if (cats.length > 0) {
           data = cats.map(c => {
             return {
-              x: this.plotlyUnpackConditional(this.plotData, this.variableOne, this.colorBy, c),
-              y: this.plotlyUnpackConditional(this.plotData, this.variableTwo, this.colorBy, c),
+              x: this.plotlyUnpackConditional(this.plotData, this.variableOne, this.colorBy, c, vOneType),
+              y: this.plotlyUnpackConditional(this.plotData, this.variableTwo, this.colorBy, c, vTwoType),
               type: 'scatter',
               mode: 'markers',
               name: c
@@ -119,14 +129,15 @@ export default {
           }).filter(d => d.x.length > 0 && d.y.length > 0 && d.x.some(x => x !== null) && d.y.some(y => y !== null))
         } else {
           data = [{
-            x: this.plotlyUnpack(this.plotData, this.variableOne),
-            y: this.plotlyUnpack(this.plotData, this.variableTwo),
+            x: this.plotlyUnpack(this.plotData, this.variableOne, vOneType),
+            y: this.plotlyUnpack(this.plotData, this.variableTwo, vTwoType),
             type: 'scatter',
             mode: 'markers'
           }].filter(d => d.x.length > 0 && d.y.length > 0 && d.x.some(x => x !== null) && d.y.some(y => y !== null))
         }
 
         const layout = {
+          height: 500,
           xaxis: {
             title: this.variableOne,
             automargin: true,

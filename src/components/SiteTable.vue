@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-container fluid class="mt-3">
     <template v-if="serverData">
       <b-form-group label="Filter" label-for="search" class="mb-0">
         <b-input-group>
@@ -40,6 +40,18 @@
           <span class="text-nowrap">
             <i :class="{ 'icon-fertilizer': true, disabled: !data.item.fertilizer }" />
             <span v-if="data.item.fertilizer" class="ml-2 text-preview" v-b-tooltip="data.item.fertilizer">{{ data.item.fertilizer }}</span>
+          </span>
+        </template>
+        <template #cell(herbicide)="data">
+          <span class="text-nowrap">
+            <i :class="{ 'icon-herbicide': true, disabled: !data.item.herbicide }" />
+            <span v-if="data.item.herbicide" class="ml-2 text-preview" v-b-tooltip="data.item.herbicide">{{ data.item.herbicide }}</span>
+          </span>
+        </template>
+        <template #cell(pests)="data">
+          <span class="text-nowrap">
+            <i :class="{ 'icon-pests': true, disabled: !data.item.pests }" />
+            <span v-if="data.item.pests" class="ml-2 text-preview" v-b-tooltip="data.item.pests">{{ data.item.pests }}</span>
           </span>
         </template>
         <template #cell(tillage)="data">
@@ -109,7 +121,7 @@
       </div>
     </template>
     <LoadingIndicator v-else />
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -147,6 +159,8 @@ export default {
         { key: 'longitude', label: 'Longitude', formatter: value => value !== null ? value.toFixed(2) : null, class: 'text-right', sortable: true },
         { key: 'components', labels: 'Components' },
         { key: 'fertilizer', label: 'Fertilizer', sortable: true },
+        { key: 'herbicide', label: 'Herbicide', sortable: true },
+        { key: 'pests', label: 'Pests', sortable: true },
         { key: 'tillage', label: 'Tillage', sortable: true },
         { key: 'farmManagement', label: 'Farm management', sortable: true },
         { key: 'cropPurpose', label: 'Crop purpose', sortable: true },

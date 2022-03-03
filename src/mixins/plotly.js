@@ -1,14 +1,21 @@
 export default {
   methods: {
-    plotlyUnpack: function (rows, key) {
-      return rows.map(row => this.plotlyExtractValue(row, key))
+    plotlyUnpack: function (rows, key, type) {
+      return rows.map(row => this.plotlyExtractValue(row, key, type))
     },
-    plotlyUnpackConditional: function (rows, key, referenceColumn, referenceValue) {
+    plotlyUnpackConditional: function (rows, key, referenceColumn, referenceValue, type) {
       return rows.filter(row => row[referenceColumn] === referenceValue)
-        .map(row => this.plotlyExtractValue(row, key))
+        .map(row => this.plotlyExtractValue(row, key, type))
     },
-    plotlyExtractValue: function (row, key) {
+    plotlyExtractValue: function (row, key, type) {
       const dataPoint = row[key]
+
+      if (type === 'yesNo') {
+        return dataPoint !== null && dataPoint !== undefined && dataPoint !== ''
+      } else if (type === 'categorical') {
+        return dataPoint
+      }
+
       if (dataPoint === null || dataPoint === undefined || dataPoint === '') {
         return null
       } else {

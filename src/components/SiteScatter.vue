@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <b-container class="mt-3">
     <ScatterChart :plotData="blob" :dataColumns="columns" v-for="index in chartCount" :key="`chart-${index}`" />
     <b-button @click="chartCount++">Add</b-button>
-  </div>
+  </b-container>
 </template>
 
 <script>

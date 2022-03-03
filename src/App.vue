@@ -26,9 +26,7 @@
     </b-navbar>
 
     <!-- The main content -->
-    <b-container fluid class="mt-3">
-      <router-view :key="$route.path" />
-    </b-container>
+    <router-view :key="$route.path" />
   </div>
 </template>
 
@@ -110,6 +108,12 @@ i.icon-monoculture {
 }
 i.icon-fertilizer {
   background-image: url("~@/assets/img/fertilizer.svg");
+}
+i.icon-herbicide {
+  background-image: url("~@/assets/img/herbicide.svg");
+}
+i.icon-pests {
+  background-image: url("~@/assets/img/pests.svg");
 }
 i.icon-tillage {
   background-image: url("~@/assets/img/tillage.svg");
