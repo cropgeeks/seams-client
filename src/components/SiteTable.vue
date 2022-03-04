@@ -17,6 +17,7 @@
               :per-page="perPage"
               :current-page="currentPage"
               @filtered="updateItemCount"
+              table-class="position-relative"
               head-variant="dark"
               primary-key="datasetId"
               show-empty
@@ -160,7 +161,6 @@ export default {
         { key: 'components', labels: 'Components' },
         { key: 'fertilizer', label: 'Fertilizer', sortable: true },
         { key: 'herbicide', label: 'Herbicide', sortable: true },
-        { key: 'pests', label: 'Pests', sortable: true },
         { key: 'tillage', label: 'Tillage', sortable: true },
         { key: 'farmManagement', label: 'Farm management', sortable: true },
         { key: 'cropPurpose', label: 'Crop purpose', sortable: true },
@@ -265,5 +265,10 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 12ch;
+}
+</style>
+<style>
+.site-table .b-table-details .row {
+  max-width: 97.5vw;
 }
 </style>

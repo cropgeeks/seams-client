@@ -1,7 +1,7 @@
 <template>
   <div>
     <template v-if="serverData">
-      <b-button-group class="color-options">
+      <b-button-group class="color-options flex-wrap">
         <!-- Variable options. Use object to generate a button for each key. Use component icon or class icon -->
         <b-button :pressed="variable === key" @click="variable = key" v-for="(value, key) in variables" :key="`variable-${key}`">
           <i :class="value.class" />
