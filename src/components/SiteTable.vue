@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="serverData">
+    <template v-if="serverData && categories">
       <b-form-group label="Filter" label-for="search" class="mb-0">
         <b-input-group class="site-table-filter">
           <b-input id="search" type="search" :debounce="100" placeholder="Search (e.g. 'barley', 'legumes', 'plough' or 'organic')" v-model="filter" />
@@ -27,6 +27,9 @@
               striped
               hover
               class="site-table" >
+        <template #cell(location)="data">
+          <BIconGeoAltFill v-b-tooltip="`${data.item.latitude.toFixed(2)}, ${data.item.longitude.toFixed(2)}`" v-if="data.item.latitude && data.item.longitude"/>
+        </template>
         <template #cell(components)="data">
           <div class="d-flex justify-content-start align-items-start">
             <b-button size="sm" :variant="data.item.components ? 'primary' : 'secondary'" class="mr-2" @click="data.toggleDetails" :disabled="!data.item.components">
@@ -57,19 +60,19 @@
         </template>
         <template #cell(tillage)="data">
           <span class="text-nowrap">
-            <i :class="{ 'icon-tillage': true, disabled: !data.item.tillage }" />
+            <i :class="{ 'icon-tillage': true, disabled: !data.item.tillage }" :style="{ backgroundColor: colors[categories.tillage.indexOf(data.item.tillage) % colors.length] }" />
             <span v-if="data.item.tillage" class="ml-2 text-preview" v-b-tooltip="data.item.tillage">{{ data.item.tillage }}</span>
           </span>
         </template>
         <template #cell(farmManagement)="data">
           <span class="text-nowrap">
-            <i :class="{ 'icon-farm-management': true, disabled: !data.item.farmManagement }" />
+            <i :class="{ 'icon-farm-management': true, disabled: !data.item.farmManagement }" :style="{ backgroundColor: colors[categories.farmManagement.indexOf(data.item.farmManagement) % colors.length] }" />
             <span v-if="data.item.farmManagement" class="ml-2 text-preview" v-b-tooltip="data.item.farmManagement">{{ data.item.farmManagement }}</span>
           </span>
         </template>
         <template #cell(cropPurpose)="data">
           <span class="text-nowrap">
-            <i :class="{ 'icon-croppurpose': true, disabled: !data.item.cropPurpose }" />
+            <i :class="{ 'icon-croppurpose': true, disabled: !data.item.cropPurpose }" :style="{ backgroundColor: colors[categories.cropPurpose.indexOf(data.item.cropPurpose) % colors.length] }" />
             <span v-if="data.item.cropPurpose" class="ml-2 text-preview" v-b-tooltip="data.item.cropPurpose">{{ data.item.cropPurpose }}</span>
           </span>
         </template>
@@ -126,16 +129,25 @@
 </template>
 
 <script>
-import api from '@/mixins/api'
-
-import { BIconArrowDownSquareFill } from 'bootstrap-vue'
+import { BIconArrowDownSquareFill, BIconGeoAltFill } from 'bootstrap-vue'
 
 import LoadingIndicator from '@/components/LoadingIndicator'
 
 export default {
   components: {
     BIconArrowDownSquareFill,
+    BIconGeoAltFill,
     LoadingIndicator
+  },
+  props: {
+    serverData: {
+      type: Array,
+      default: () => null
+    },
+    categories: {
+      type: Object,
+      default: () => {}
+    }
   },
   data: function () {
     return {
@@ -143,7 +155,6 @@ export default {
       perPage: 10,
       itemCount: 0,
       filteredItems: null,
-      serverData: null,
       filter: null,
       isAnd: true,
       families: {
@@ -153,11 +164,12 @@ export default {
         other: ['plantain']
       },
       columns: [
-        { key: 'datasetId', label: 'Dataset id', sortable: true },
+        // { key: 'datasetId', label: 'Dataset id', sortable: true },
         { key: 'datasetName', label: 'Dataset name', sortable: true },
         { key: 'siteName', label: 'Site name', sortable: true },
-        { key: 'latitude', label: 'Latitude', formatter: value => value !== null ? value.toFixed(2) : null, class: 'text-right', sortable: true },
-        { key: 'longitude', label: 'Longitude', formatter: value => value !== null ? value.toFixed(2) : null, class: 'text-right', sortable: true },
+        { key: 'location', label: 'Location', sortable: false },
+        // { key: 'latitude', label: 'Latitude', formatter: value => value !== null ? value.toFixed(2) : null, class: 'text-right', sortable: true },
+        // { key: 'longitude', label: 'Longitude', formatter: value => value !== null ? value.toFixed(2) : null, class: 'text-right', sortable: true },
         { key: 'components', labels: 'Components' },
         { key: 'fertilizer', label: 'Fertilizer', sortable: true },
         { key: 'herbicide', label: 'Herbicide', sortable: true },
@@ -170,7 +182,15 @@ export default {
       ]
     }
   },
-  mixins: [api],
+  watch: {
+    serverData: function (newValue) {
+      if (newValue) {
+        this.itemCount = newValue.length
+      } else {
+        this.itemCount = 0
+      }
+    }
+  },
   methods: {
     updateItemCount: function (rows) {
       // Trigger pagination to update the number of buttons/pages due to filtering
@@ -224,16 +244,11 @@ export default {
     }
   },
   created: function () {
-    this.apiGetDatasets()
-      .then(result => {
-        if (result && result.data) {
-          this.serverData = result.data
-          this.itemCount = result.data.length
-        } else {
-          this.serverData = null
-          this.itemCount = 0
-        }
-      })
+    if (this.serverData) {
+      this.itemCount = this.serverData.length
+    } else {
+      this.itemCount = 0
+    }
   }
 }
 </script>
@@ -246,12 +261,15 @@ export default {
 }
 
 .site-table i {
-  width: 1.6em;
-  height: 1.6em;
+  width: 1.7em;
+  height: 1.7em;
   display: inline-block;
-  background-size: 1.6em 1.6em;
+  background-size: 1.7em 1.7em;
   background-repeat: no-repeat;
   vertical-align: top;
+  -webkit-mask-size: 1.6em 1.6em;
+  mask-size: 1.6em 1.6em;
+  background-color: black;
 }
 .site-table i.disabled {
   opacity: 0.2;

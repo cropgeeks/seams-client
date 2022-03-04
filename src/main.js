@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from '@/App.vue'
 import router from '@/router'
 import store from '@/store'
+import commonMixin from '@/mixins/common.js'
 import { i18n } from '@/plugins/i18n.js'
 
 import { Icon } from 'leaflet'
@@ -81,6 +82,8 @@ Vue.use({
     window.Plotly = Vue.prototype.$plotly
   }
 })
+
+Vue.mixin(commonMixin)
 
 Vue.config.productionTip = false
 

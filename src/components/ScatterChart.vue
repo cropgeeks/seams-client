@@ -149,7 +149,13 @@ export default {
             showgrid: true
           },
           hovermode: 'closest',
-          legend: { orientation: 'h' }
+          legend: {
+            xanchor: 'left',
+            yanchor: 'bottom',
+            y: 1,
+            x: 0,
+            orientation: 'h'
+          }
         }
 
         const config = {

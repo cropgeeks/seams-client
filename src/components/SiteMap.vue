@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="serverData">
+    <template v-if="serverData && categories">
       <b-button-group class="color-options flex-wrap">
         <!-- Variable options. Use object to generate a button for each key. Use component icon or class icon -->
         <b-button :pressed="variable === key" @click="variable = key" v-for="(value, key) in variables" :key="`variable-${key}`">
@@ -122,13 +122,20 @@ export default {
     BIconCircleFill,
     LoadingIndicator
   },
+  props: {
+    serverData: {
+      type: Array,
+      default: () => null
+    },
+    categories: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data: function () {
     return {
-      serverData: null,
       variable: 'ler',
       filterDatasetIds: null,
-      colors: ['#00a0f1', '#5ec418', '#910080', '#222183', '#ff7c00', '#c5e000', '#c83831', '#ff007a', '#fff600'],
-      categories: null,
       locationData: null,
       variables: {
         ler: { text: 'LER', class: 'icon-ler' },
@@ -166,41 +173,15 @@ export default {
   mixins: [api],
   methods: {
     update: function () {
-      if (this.serverData) {
+      if (this.serverData && this.categories) {
         const mapping = {}
-        const categoryMapping = {}
         Object.keys(this.variables).forEach(variableKey => {
           let max = 0
           let min = 0
 
-          let cats = []
-
           const filteredData = this.serverData
             .filter(s => this.filterDatasetIds ? this.filterDatasetIds.includes(s.datasetId) : true) // Restrict to filtered dataset ids (if any)
             .filter(s => s.latitude >= -90 && s.latitude <= 90 && s.longitude >= -180 && s.longitude < 180) // Restrict to valid lat/lng values
-
-          if (variableKey === 'tillage' || variableKey === 'farmManagement' || variableKey === 'cropPurpose') {
-            const set = new Set()
-
-            filteredData.filter(s => s[variableKey])
-              .forEach(t => set.add(t[variableKey].trim()))
-
-            cats = Array.from(set)
-            cats.sort()
-
-            categoryMapping[variableKey] = cats.concat()
-          } else if (variableKey === 'monoYield') {
-            const set = new Set()
-
-            filteredData.filter(ds => ds.components).forEach(ds => ds.components.forEach(c => set.add(c.cropName.trim())))
-
-            cats = Array.from(set)
-            cats.sort()
-
-            categoryMapping[variableKey] = cats.concat()
-          } else {
-            categoryMapping[variableKey] = null
-          }
 
           let result = []
 
@@ -265,14 +246,14 @@ export default {
                   }, 250, dataPoints.length)
 
                   dataPoints.forEach((dp, index) => {
-                    addValue(dp.measurement, this.colors[cats.indexOf(s.components.find(c => c.id === dp.componentIds[0]).cropName.trim()) % this.colors.length], s, coords[index].latitude, coords[index].longitude)
+                    addValue(dp.measurement, this.colors[this.categories.components.indexOf(s.components.find(c => c.id === dp.componentIds[0]).cropName.trim()) % this.colors.length], s, coords[index].latitude, coords[index].longitude)
                   })
                 }
               }
             } else if (variableKey === 'tillage' || variableKey === 'farmManagement' || variableKey === 'cropPurpose') {
               const value = s[variableKey]
               if (value) {
-                addValue(value, this.colors[cats.indexOf(s[variableKey].trim()) % this.colors.length], s, s.latitude, s.longitude)
+                addValue(value, this.colors[this.categories[variableKey].indexOf(s[variableKey].trim()) % this.colors.length], s, s.latitude, s.longitude)
               } else {
                 addValue(value, null, s, s.latitude, s.longitude)
               }
@@ -301,9 +282,6 @@ export default {
 
         Object.freeze(mapping)
         this.locationData = mapping
-
-        Object.freeze(categoryMapping)
-        this.categories = categoryMapping
       } else {
         return {}
       }
@@ -371,16 +349,6 @@ export default {
       map.on('focus', () => map.scrollWheelZoom.enable())
       map.on('blur', () => map.scrollWheelZoom.disable())
     }
-  },
-  mounted: function () {
-    this.apiGetDatasets()
-      .then(result => {
-        if (result && result.data) {
-          this.serverData = result.data
-        } else {
-          this.serverData = null
-        }
-      })
   }
 }
 </script>
@@ -396,12 +364,15 @@ export default {
 }
 .map i,
 .color-options i {
-  width: 1.5em;
-  height: 1.5em;
+  width: 1.7em;
+  height: 1.7em;
   display: inline-block;
-  background-size: 1.5em 1.5em;
+  background-size: 1.7em 1.7em;
   background-repeat: no-repeat;
-  vertical-align: middle;
+  vertical-align: top;
+  -webkit-mask-size: 1.6em 1.6em;
+  mask-size: 1.6em 1.6em;
+  background-color: black;
 }
 .map .leaflet-popup-content {
   max-width: 60vw;

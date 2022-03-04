@@ -26,7 +26,7 @@
     </b-navbar>
 
     <!-- The main content -->
-    <b-container fluid class="mt-3">
+    <b-container fluid class="my-3">
       <router-view :key="$route.path" />
     </b-container>
   </div>
@@ -94,87 +94,115 @@ body {
 }
 
 i.icon-value {
-  background-image: url("~@/assets/img/value.svg");
+  -webkit-mask: url("~@/assets/img/value.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/value.svg") no-repeat 100% 100%;
 }
 i.icon-ler {
-  background-image: url("~@/assets/img/ler.svg");
+  -webkit-mask: url("~@/assets/img/ler.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/ler.svg") no-repeat 100% 100%;
 }
 i.icon-croppurpose {
-  background-image: url("~@/assets/img/covercrop.svg");
+  -webkit-mask: url("~@/assets/img/covercrop.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/covercrop.svg") no-repeat 100% 100%;
 }
 i.icon-mixture {
-  background-image: url("~@/assets/img/mixture.svg");
+  -webkit-mask: url("~@/assets/img/mixture.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/mixture.svg") no-repeat 100% 100%;
 }
 i.icon-monoculture {
-  background-image: url("~@/assets/img/monoculture.svg");
+  -webkit-mask: url("~@/assets/img/monoculture.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/monoculture.svg") no-repeat 100% 100%;
 }
 i.icon-fertilizer {
-  background-image: url("~@/assets/img/fertilizer.svg");
+  -webkit-mask: url("~@/assets/img/fertilizer.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/fertilizer.svg") no-repeat 100% 100%;
 }
 i.icon-herbicide {
-  background-image: url("~@/assets/img/herbicide.svg");
+  -webkit-mask: url("~@/assets/img/herbicide.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/herbicide.svg") no-repeat 100% 100%;
 }
 i.icon-pests {
-  background-image: url("~@/assets/img/pests.svg");
+  -webkit-mask: url("~@/assets/img/pests.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/pests.svg") no-repeat 100% 100%;
 }
 i.icon-tillage {
-  background-image: url("~@/assets/img/tillage.svg");
+  -webkit-mask: url("~@/assets/img/tillage.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/tillage.svg") no-repeat 100% 100%;
 }
 i.icon-farm-management {
-  background-image: url("~@/assets/img/farm-management.svg");
+  -webkit-mask: url("~@/assets/img/farm-management.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/farm-management.svg") no-repeat 100% 100%;
 }
 i.icon-weed-cover {
-  background-image: url("~@/assets/img/weed-cover.svg");
+  -webkit-mask: url("~@/assets/img/weed-cover.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/weed-cover.svg") no-repeat 100% 100%;
 }
 i.icon-sowing-date {
-  background-image: url("~@/assets/img/sowing-date.svg");
+  -webkit-mask: url("~@/assets/img/sowing-date.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/sowing-date.svg") no-repeat 100% 100%;
 }
 i.icon-harvest-date {
-  background-image: url("~@/assets/img/harvest-date.svg");
+  -webkit-mask: url("~@/assets/img/harvest-date.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/harvest-date.svg") no-repeat 100% 100%;
 }
 i.icon-barley {
-  background-image: url("~@/assets/img/crops/barley.svg");
+  -webkit-mask: url("~@/assets/img/crops/barley.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/barley.svg") no-repeat 100% 100%;
 }
 i.icon-beans {
-  background-image: url("~@/assets/img/crops/bean.svg");
+  -webkit-mask: url("~@/assets/img/crops/bean.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/bean.svg") no-repeat 100% 100%;
 }
 i.icon-blueberry {
-  background-image: url("~@/assets/img/crops/blueberry.svg");
+  -webkit-mask: url("~@/assets/img/crops/blueberry.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/blueberry.svg") no-repeat 100% 100%;
 }
 i.icon-clover {
-  background-image: url("~@/assets/img/crops/clover.svg");
+  -webkit-mask: url("~@/assets/img/crops/clover.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/clover.svg") no-repeat 100% 100%;
 }
 i.icon-linseed {
-  background-image: url("~@/assets/img/crops/flax.svg");
+  -webkit-mask: url("~@/assets/img/crops/flax.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/flax.svg") no-repeat 100% 100%;
 }
 i.icon-maize {
-  background-image: url("~@/assets/img/crops/maize.svg");
+  -webkit-mask: url("~@/assets/img/crops/maize.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/maize.svg") no-repeat 100% 100%;
 }
 i.icon-oats {
-  background-image: url("~@/assets/img/crops/oat.svg");
+  -webkit-mask: url("~@/assets/img/crops/oat.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/oat.svg") no-repeat 100% 100%;
 }
 i.icon-oilseed {
-  background-image: url("~@/assets/img/crops/canola.svg");
+  -webkit-mask: url("~@/assets/img/crops/canola.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/canola.svg") no-repeat 100% 100%;
 }
 i.icon-peas {
-  background-image: url("~@/assets/img/crops/pea.svg");
+  -webkit-mask: url("~@/assets/img/crops/pea.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/pea.svg") no-repeat 100% 100%;
 }
 i.icon-raspberry {
-  background-image: url("~@/assets/img/crops/raspberry.svg");
+  -webkit-mask: url("~@/assets/img/crops/raspberry.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/raspberry.svg") no-repeat 100% 100%;
 }
 i.icon-rye {
-  background-image: url("~@/assets/img/crops/rye.svg");
+  -webkit-mask: url("~@/assets/img/crops/rye.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/rye.svg") no-repeat 100% 100%;
 }
 i.icon-strawberry {
-  background-image: url("~@/assets/img/crops/strawberry.svg");
+  -webkit-mask: url("~@/assets/img/crops/strawberry.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/strawberry.svg") no-repeat 100% 100%;
 }
 i.icon-turnip {
-  background-image: url("~@/assets/img/crops/turnip.svg");
+  -webkit-mask: url("~@/assets/img/crops/turnip.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/turnip.svg") no-repeat 100% 100%;
 }
 i.icon-wheat {
-  background-image: url("~@/assets/img/crops/wheat.svg");
+  -webkit-mask: url("~@/assets/img/crops/wheat.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/wheat.svg") no-repeat 100% 100%;
 }
 i.icon-potato {
-  background-image: url("~@/assets/img/crops/potato.svg");
+  -webkit-mask: url("~@/assets/img/crops/potato.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/potato.svg") no-repeat 100% 100%;
 }
 </style>
