@@ -62,8 +62,8 @@
                 <b-col cols=12 md=3 class="mb-3">
                   <b-card class="text-center h-100">
                     <b-card-title><i class="icon-croppurpose"/></b-card-title>
-                    <b-card-sub-title>Cover crop</b-card-sub-title>
-                    <b-card-text>{{ location.dataset.croppurpose }}</b-card-text>
+                    <b-card-sub-title>Crop purpose</b-card-sub-title>
+                    <b-card-text>{{ location.dataset.cropPurpose }}</b-card-text>
                   </b-card>
                 </b-col>
                 <b-col cols=12 md=3 class="mb-3">
