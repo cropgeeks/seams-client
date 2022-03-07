@@ -246,7 +246,7 @@ export default {
                   }, 250, dataPoints.length)
 
                   dataPoints.forEach((dp, index) => {
-                    addValue(dp.measurement, this.colors[this.categories.components.indexOf(s.components.find(c => c.id === dp.componentIds[0]).cropName.trim()) % this.colors.length], s, coords[index].latitude, coords[index].longitude)
+                    addValue(dp.measurement, this.colors[this.categories.monoYield.indexOf(s.components.find(c => c.id === dp.componentIds[0]).cropName.trim()) % this.colors.length], s, coords[index].latitude, coords[index].longitude)
                   })
                 }
               }

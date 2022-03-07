@@ -26,7 +26,7 @@ export default {
   data: function () {
     return {
       serverData: null,
-      variables: ['tillage', 'farmManagement', 'cropPurpose', 'components']
+      variables: ['tillage', 'farmManagement', 'cropPurpose', 'monoYield']
     }
   },
   computed: {
@@ -36,7 +36,7 @@ export default {
         this.variables.forEach(v => {
           const set = new Set()
           this.serverData.forEach(dp => {
-            if (v === 'components') {
+            if (v === 'monoYield') {
               if (dp.components) {
                 dp.components.forEach(c => set.add(c.cropName.trim()))
               }
