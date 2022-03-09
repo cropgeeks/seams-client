@@ -18,7 +18,7 @@
           </div>
         </LControl>
 
-        <template v-if="locationData && locationData[variable]">
+        <template v-if="locationData && locationData[variable] && locationData[variable].length > 0">
           <LCircleMarker v-for="location in locationData[variable]"
                         :radius="location.radius"
                         :weight="0.25"
@@ -98,6 +98,13 @@
             </LPopup>
           </LCircleMarker>
         </template>
+        <LMarker :lat-lng="[57, -3.5]" v-else>
+          <LIcon :icon-size="[400, 200]" :icon-anchor="[200, 100]">
+            <div class="no-data-marker d-flex text-white justify-content-center align-items-center">
+              <h1>No data found</h1>
+            </div>
+          </LIcon>
+        </LMarker>
       </LMap>
     </template>
     <LoadingIndicator v-else />
@@ -107,7 +114,7 @@
 <script>
 import api from '@/mixins/api'
 import L from 'leaflet'
-import { LMap, LCircleMarker, LControl, LPopup } from 'vue2-leaflet'
+import { LMap, LCircleMarker, LControl, LPopup, LIcon, LMarker } from 'vue2-leaflet'
 import { BIconCircleFill } from 'bootstrap-vue'
 import LoadingIndicator from '@/components/LoadingIndicator'
 
@@ -118,6 +125,8 @@ export default {
     LMap,
     LCircleMarker,
     LControl,
+    LIcon,
+    LMarker,
     LPopup,
     BIconCircleFill,
     LoadingIndicator
@@ -134,7 +143,10 @@ export default {
   },
   data: function () {
     return {
-      variable: 'ler',
+      noDataOptions: {
+        html: "<a href='#'>TEST</a>"
+      },
+      variable: 'mixYield',
       filterDatasetIds: null,
       locationData: null,
       variables: {
@@ -158,7 +170,11 @@ export default {
       if (b.isValid()) {
         return b.pad(0.1)
       } else {
-        return null
+        b.extend([54.604746, -7.671065])
+        b.extend([60.863213, -7.671065])
+        b.extend([54.604746, -0.733540])
+        b.extend([60.863213, -0.733540])
+        return b.pad(0.1)
       }
     }
   },
@@ -377,6 +393,11 @@ export default {
 .map .leaflet-popup-content {
   max-width: 60vw;
   width: 700px !important;
+}
+.map .no-data-marker {
+  height: 200px;
+  width: 400px;
+  background-color: rgba(55, 58, 60, .75);
 }
 
 </style>

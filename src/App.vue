@@ -1,9 +1,8 @@
 <template>
-  <div>
+  <div class="d-flex flex-column overflow-hidden min-vh-100">
     <b-navbar toggleable="lg" type="dark" variant="dark" id="main-navigation">
       <b-navbar-brand :to="{ name: 'home' }" class="d-flex align-items-center">
-        <!-- <img src="img/gridscore2.svg" height="40px" class="d-inline-block align-top mr-3" alt="GridScore"> -->
-        SEAMS
+        <b-img :src="require('@/assets/img/seams.png')" height="30px" class="d-inline-block align-top mr-3" alt="SEAMS" />
       </b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -24,11 +23,12 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-
     <!-- The main content -->
-    <b-container fluid class="my-3">
+    <b-container fluid class="my-3 flex-grow-1">
       <router-view :key="$route.path" />
     </b-container>
+
+    <Footer />
   </div>
 </template>
 
@@ -36,11 +36,16 @@
 import { mapGetters } from 'vuex'
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { BIconInfoCircle, BIconFlag } from 'bootstrap-vue'
+import { VuePlausible } from 'vue-plausible'
+import Vue from 'vue'
+
+import Footer from '@/components/Footer'
 
 export default {
   components: {
     BIconInfoCircle,
-    BIconFlag
+    BIconFlag,
+    Footer
   },
   data: function () {
     return {
@@ -75,6 +80,17 @@ export default {
   },
   mounted: function () {
     loadLanguageAsync(this.storeLocale)
+
+    Vue.use(VuePlausible, {
+      domain: 'ics.hutton.ac.uk/seams',
+      hashMode: true,
+      apiHost: 'https://plausible.hutton.ac.uk',
+      trackLocalhost: false
+    })
+
+    this.$nextTick(() => {
+      this.$plausible.enableAutoPageviews()
+    })
   }
 }
 </script>
@@ -153,13 +169,13 @@ i.icon-beans {
   -webkit-mask: url("~@/assets/img/crops/bean.svg") no-repeat 100% 100%;
   mask: url("~@/assets/img/crops/bean.svg") no-repeat 100% 100%;
 }
-i.icon-blueberry {
-  -webkit-mask: url("~@/assets/img/crops/blueberry.svg") no-repeat 100% 100%;
-  mask: url("~@/assets/img/crops/blueberry.svg") no-repeat 100% 100%;
-}
 i.icon-clover {
   -webkit-mask: url("~@/assets/img/crops/clover.svg") no-repeat 100% 100%;
   mask: url("~@/assets/img/crops/clover.svg") no-repeat 100% 100%;
+}
+i.icon-vetch {
+  -webkit-mask: url("~@/assets/img/crops/vetch.svg") no-repeat 100% 100%;
+  mask: url("~@/assets/img/crops/vetch.svg") no-repeat 100% 100%;
 }
 i.icon-linseed {
   -webkit-mask: url("~@/assets/img/crops/flax.svg") no-repeat 100% 100%;
@@ -181,17 +197,9 @@ i.icon-peas {
   -webkit-mask: url("~@/assets/img/crops/pea.svg") no-repeat 100% 100%;
   mask: url("~@/assets/img/crops/pea.svg") no-repeat 100% 100%;
 }
-i.icon-raspberry {
-  -webkit-mask: url("~@/assets/img/crops/raspberry.svg") no-repeat 100% 100%;
-  mask: url("~@/assets/img/crops/raspberry.svg") no-repeat 100% 100%;
-}
 i.icon-rye {
   -webkit-mask: url("~@/assets/img/crops/rye.svg") no-repeat 100% 100%;
   mask: url("~@/assets/img/crops/rye.svg") no-repeat 100% 100%;
-}
-i.icon-strawberry {
-  -webkit-mask: url("~@/assets/img/crops/strawberry.svg") no-repeat 100% 100%;
-  mask: url("~@/assets/img/crops/strawberry.svg") no-repeat 100% 100%;
 }
 i.icon-turnip {
   -webkit-mask: url("~@/assets/img/crops/turnip.svg") no-repeat 100% 100%;
