@@ -119,20 +119,41 @@ export default {
         let data
         if (cats.length > 0) {
           data = cats.map(c => {
+            const realX = this.plotlyUnpackConditional(this.plotData, this.variableOne, this.colorBy, c, null)
+            const realY = this.plotlyUnpackConditional(this.plotData, this.variableTwo, this.colorBy, c, null)
+            const siteName = this.plotlyUnpackConditional(this.plotData, 'site_name', this.colorBy, c, null)
+            const components = this.plotlyUnpackConditional(this.plotData, 'components', this.colorBy, c, null)
+            const text = realX.map((x, i) => `${siteName[i]}: ${components[i] ? JSON.parse(components[i]).join(', ') : ''}<br>${realX[i]} - ${realY[i]}`)
             return {
               x: this.plotlyUnpackConditional(this.plotData, this.variableOne, this.colorBy, c, vOneType),
               y: this.plotlyUnpackConditional(this.plotData, this.variableTwo, this.colorBy, c, vTwoType),
+              text: text,
               type: 'scatter',
               mode: 'markers',
-              name: c
+              name: c,
+              hovertemplate:
+                '<b>%{text}</b><br><br>' +
+                '%{yaxis.title.text}: %{y}<br>' +
+                '%{xaxis.title.text}: %{x}<br>'
             }
           }).filter(d => d.x.length > 0 && d.y.length > 0 && d.x.some(x => x !== null) && d.y.some(y => y !== null))
         } else {
+          const realX = this.plotlyUnpack(this.plotData, this.variableOne, null)
+          const realY = this.plotlyUnpack(this.plotData, this.variableTwo, null)
+          const siteName = this.plotlyUnpack(this.plotData, 'site_name', null)
+          const components = this.plotlyUnpack(this.plotData, 'components', null)
+          const text = realX.map((x, i) => `${siteName[i]}: ${components[i] ? JSON.parse(components[i]).join(', ') : ''}<br>${realX[i]} - ${realY[i]}`)
           data = [{
             x: this.plotlyUnpack(this.plotData, this.variableOne, vOneType),
             y: this.plotlyUnpack(this.plotData, this.variableTwo, vTwoType),
+            text: text,
             type: 'scatter',
-            mode: 'markers'
+            mode: 'markers',
+            hovertemplate:
+              '<b>%{text}</b><br><br>' +
+              '%{yaxis.title.text}: %{y}<br>' +
+              '%{xaxis.title.text}: %{x}<br>' +
+              '<extra></extra>'
           }].filter(d => d.x.length > 0 && d.y.length > 0 && d.x.some(x => x !== null) && d.y.some(y => y !== null))
         }
 
