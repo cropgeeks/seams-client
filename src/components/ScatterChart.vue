@@ -57,6 +57,7 @@ export default {
         { value: 'dataset_name', text: 'Dataset' },
         { value: 'weed_cover', text: 'Weed cover' },
         { value: 'disease', text: 'Disease' },
+        { value: 'crop_purpose', text: 'Crop purpose' },
         { value: 'pests', text: 'Pests' },
         { value: 'dataset_name', text: 'Dataset' },
         { value: 'measurement_type', text: 'Mono/Mix' }
