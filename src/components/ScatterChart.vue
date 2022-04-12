@@ -102,7 +102,7 @@ export default {
         if (this.colorBy) {
           const categories = new Set()
 
-          var unpacked = this.plotlyUnpack(this.plotData, this.colorBy, vCatType)
+          const unpacked = this.plotlyUnpack(this.plotData, this.colorBy, vCatType)
           for (let i = 0; i < unpacked.length; i++) {
             if (unpacked[i] !== undefined && unpacked[i] !== null) {
               if (typeof unpacked[i] === 'string') {

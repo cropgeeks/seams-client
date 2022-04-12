@@ -30,7 +30,7 @@ export default {
         if (isDate) {
           return dataPoint
         } else {
-          var value = parseFloat(dataPoint)
+          const value = parseFloat(dataPoint)
 
           if (isNaN(value)) {
             return dataPoint.trim()
