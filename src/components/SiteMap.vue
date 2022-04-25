@@ -18,6 +18,10 @@
           </div>
         </LControl>
 
+        <template v-if="cameras && cameras.length > 0">
+          <LMarker v-for="camera in cameras" :key="`camera-${camera.rid}`" :latLng="[camera.lat, camera.lng]" :icon="cameraIcon" :options="{ title: camera.name }" @click="showCamera(camera)" />
+        </template>
+
         <template v-if="locationData && locationData[variable] && locationData[variable].length > 0">
           <LCircleMarker v-for="location in locationData[variable]"
                         :radius="location.radius"
@@ -108,17 +112,25 @@
       </LMap>
     </template>
     <LoadingIndicator v-else />
+
+    <b-modal size="lg" ref="cameraModal" v-if="selectedCamera" @hidden="() => { selectedCamera = null }" :title="selectedCamera.name" ok-only>
+      <div class="text-center">
+        <p v-if="selectedCamera.at">{{ new Date(selectedCamera.at).toLocaleString() }}</p>
+        <ImageZoom :regular="cameraImageUrl" img-class="img-fluid w-100" click-zoom />
+      </div>
+    </b-modal>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import api from '@/mixins/api'
 import L from 'leaflet'
 import { LMap, LCircleMarker, LControl, LPopup, LIcon, LMarker } from 'vue2-leaflet'
 import { BIconCircleFill } from 'bootstrap-vue'
 import LoadingIndicator from '@/components/LoadingIndicator'
-
 import 'leaflet/dist/leaflet.css'
+import ImageZoom from 'vue-image-zoomer'
 
 export default {
   components: {
@@ -129,7 +141,8 @@ export default {
     LMarker,
     LPopup,
     BIconCircleFill,
-    LoadingIndicator
+    LoadingIndicator,
+    ImageZoom
   },
   props: {
     serverData: {
@@ -149,6 +162,8 @@ export default {
       variable: 'mixYield',
       filterDatasetIds: null,
       locationData: null,
+      cameras: [],
+      selectedCamera: null,
       variables: {
         ler: { text: 'LER', class: 'icon-ler' },
         mixYield: { text: 'Mixture yield', class: 'icon-mixture' },
@@ -156,10 +171,25 @@ export default {
         tillage: { text: 'Tillage', class: 'icon-tillage' },
         farmManagement: { text: 'Farm management', class: 'icon-farm-management' },
         cropPurpose: { text: 'Crop purpose', class: 'icon-croppurpose' }
-      }
+      },
+      cameraIcon: L.divIcon({
+        html: '<span class="camera-icon"><svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="currentColor" d="M12,10.8A3.2,3.2 0 0,1 15.2,14A3.2,3.2 0 0,1 12,17.2A3.2,3.2 0 0,1 8.8,14A3.2,3.2 0 0,1 12,10.8M16,3.33V2A6,6 0 0,1 22,8H20.67C20.67,5.42 18.58,3.33 16,3.33M16,6V4.67C17.84,4.67 19.33,6.16 19.33,8H18C18,6.89 17.11,6 16,6M17,9H22V20A2,2 0 0,1 20,22H4A2,2 0 0,1 2,20V8A2,2 0 0,1 4,6H7.17L9,4H15V7C16.11,7 17,7.89 17,9M12,19A5,5 0 0,0 17,14A5,5 0 0,0 12,9A5,5 0 0,0 7,14A5,5 0 0,0 12,19Z" /></svg></span>',
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
+      })
     }
   },
   computed: {
+    ...mapGetters([
+      'storeServerUrl'
+    ]),
+    cameraImageUrl: function () {
+      if (this.selectedCamera) {
+        return `${this.storeServerUrl}camera/${encodeURIComponent(this.selectedCamera.rid)}/img/${this.selectedCamera.imgSrc}`
+      } else {
+        return null
+      }
+    },
     bounds: function () {
       const b = L.latLngBounds()
 
@@ -188,6 +218,11 @@ export default {
   },
   mixins: [api],
   methods: {
+    showCamera: function (camera) {
+      this.selectedCamera = camera
+
+      this.$nextTick(() => this.$refs.cameraModal.show())
+    },
     update: function () {
       if (this.serverData && this.categories) {
         const mapping = {}
@@ -338,7 +373,7 @@ export default {
         id: 'OpenStreetMap',
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         subdomains: ['a', 'b', 'c'],
-        maxZoom: 14,
+        maxZoom: 16,
         maxNativeZoom: 18
       })
 
@@ -365,6 +400,14 @@ export default {
       map.on('focus', () => map.scrollWheelZoom.enable())
       map.on('blur', () => map.scrollWheelZoom.disable())
     }
+  },
+  created: function () {
+    this.apiGetCameras()
+      .then(result => {
+        if (result && result.data) {
+          this.cameras = result.data
+        }
+      })
   }
 }
 </script>
@@ -375,6 +418,10 @@ export default {
 }
 </style>
 <style>
+.leaflet-div-icon {
+  background: transparent;
+  border: 0;
+}
 .map .leaflet-popup-content-wrapper {
   border-radius: 0;
 }
@@ -399,5 +446,4 @@ export default {
   width: 400px;
   background-color: rgba(55, 58, 60, .75);
 }
-
 </style>

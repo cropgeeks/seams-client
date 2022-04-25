@@ -2,6 +2,9 @@ const axios = require('axios').default
 
 export default {
   methods: {
+    apiGetCameras: function () {
+      return this.axios({ url: 'camera' })
+    },
     apiGetDatasets: function () {
       return this.axios({ url: 'dataset' })
     },
