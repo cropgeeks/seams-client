@@ -9,6 +9,7 @@
     <h1 class="mt-3">Dataset table</h1>
     <SiteTable :serverData="serverData" :categories="categories" @datasets-changed="updateMap" />
     <h1 class="mt-3">Dataset map</h1>
+    <p>See the trial in real time - click on the camera icon</p>
     <SiteMap :serverData="serverData" :categories="categories" ref="map" />
     <h1 class="mt-3">Scatter plot</h1>
     <SiteScatter />

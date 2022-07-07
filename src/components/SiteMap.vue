@@ -18,11 +18,11 @@
           </div>
         </LControl>
 
-        <template v-if="cameras && cameras.length > 0">
+        <div v-if="cameras && cameras.length > 0">
           <LMarker v-for="camera in cameras" :key="`camera-${camera.rid}`" :latLng="[camera.lat, camera.lng]" :icon="cameraIcon" :options="{ title: camera.name }" @click="showCamera(camera)" />
-        </template>
+        </div>
 
-        <template v-if="locationData && locationData[variable] && locationData[variable].length > 0">
+        <div v-if="locationData && variable && locationData[variable]">
           <LCircleMarker v-for="location in locationData[variable]"
                         :radius="location.radius"
                         :weight="0.25"
@@ -37,7 +37,7 @@
               <h3 class="d-flex justify-content-between">
                 <span>{{ location.dataset.siteName }}</span>
                 <span v-if="location.dataset.componentNames">
-                  <i :class="`icon-${component ? component.toLowerCase() : null} mx-1`" v-for="component in location.dataset.componentNames" :key="`dataset-${location.dataset.datasetId}-${component}`" />
+                  <i :class="`icon-${component ? component.toLowerCase() : null} mx-1`" v-for="(component, ci) in location.dataset.componentNames" :key="`dataset-${location.id}-${component}-${ci}`" />
                 </span>
               </h3>
 
@@ -101,7 +101,7 @@
               </b-row>
             </LPopup>
           </LCircleMarker>
-        </template>
+        </div>
         <LMarker :lat-lng="[57, -3.5]" v-else>
           <LIcon :icon-size="[400, 200]" :icon-anchor="[200, 100]">
             <div class="no-data-marker d-flex text-white justify-content-center align-items-center">
@@ -113,7 +113,7 @@
     </template>
     <LoadingIndicator v-else />
 
-    <b-modal size="lg" ref="cameraModal" v-if="selectedCamera" @hidden="() => { selectedCamera = null }" :title="selectedCamera.name" ok-only>
+    <b-modal size="xl" ref="cameraModal" v-if="selectedCamera" @hidden="() => { selectedCamera = null }" :title="selectedCamera.name" ok-only>
       <div class="text-center">
         <p v-if="selectedCamera.at">{{ new Date(selectedCamera.at).toLocaleString() }}</p>
         <ImageZoom :regular="cameraImageUrl" img-class="img-fluid w-100" click-zoom />

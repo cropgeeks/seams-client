@@ -36,7 +36,7 @@
               <i class="icon-mixture" />
             </b-button>
             <div v-if="data.item.componentNames" class="component-icons">
-              <i :class="`icon-${component ? component.toLowerCase() : null} mx-1 mb-1`" v-for="component in data.item.componentNames" :key="`row-${data.index}-${component}`" v-b-tooltip="component" />
+              <i :class="`icon-${component ? component.toLowerCase() : null} mx-1 mb-1`" v-for="(component, ci) in data.item.componentNames" :key="`row-${data.index}-${component}-${ci}`" v-b-tooltip="component" />
             </div>
           </div>
         </template>
