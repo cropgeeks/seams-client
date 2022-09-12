@@ -15,7 +15,7 @@
     <SiteScatter />
 
     <div class="mt-5">
-      <p>We hope you find this resource useful. If you would like to compare your own crop mixture trials with the ones in this database, please enter the data using the simple online form at the link below.</p>
+      <p>We hope you find this resource useful. If you would like to compare your own crop mixture trials with the ones in this database, please enter the data using this simple online form: <a href="https://docs.google.com/forms/d/e/1FAIpQLSeN78LfA9006p_fJppHWn6ROL_q2zeBpH7_7sNyOnWK-L1I8A/viewform">Google Forms</a>.</p>
       <p>If you have any question, please get in touch with <a href="mailto:ali.karley@hutton.ac.uk">Ali Karley</a>.</p>
     </div>
   </b-container>
