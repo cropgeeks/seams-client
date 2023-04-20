@@ -1,10 +1,14 @@
 <template>
   <b-container class="home">
+    <b-button @click="showIntroduction"><BIconCollectionPlay /> Show introduction tour</b-button>
+
     <p>Interested in growing mixtures but not sure what to expect? The crop mixtures data explorer (working title) will show you crop yields and other data from intercrop trials on commercial and research farms across Scotland.</p>
-    <p>Simply type a search term into the ‘Filter’ box below, such as a crop species, tillage or management type that interests you. The datasets for those mixtures will be shown in the table – click on the icons in the table to find out more information for each trial.</p>
+    <p>Simply type a search term into the 'Filter' box below, such as a crop species, tillage or management type that interests you. The datasets for those mixtures will be shown in the table – click on the icons in the table to find out more information for each trial.</p>
     <p>The yield data for the selected trials are also shown on the map below the table, both for the mixture and for each crop in monoculture. Trials with larger bubbles have larger values of yield.</p>
     <p>The tabs on the map allow you to switch between different views, showing which trials used different types of management.</p>
     <p>Further below you can plot measurements against each other and colour code the results by farm type, soil tillage and other management actions. Simply select a metric in the drop-down list for each dimension and choose your preferred way of colour coding them.</p>
+
+    <Tour :steps="tourSteps" :resetOnRouterNav="true" :hideBackButton="false" ref="tour" />
 
     <h1 class="mt-3">Dataset table</h1>
     <SiteTable :serverData="serverData" :categories="categories" @datasets-changed="updateMap" />
@@ -25,15 +29,20 @@
 import SiteMap from '@/components/SiteMap'
 import SiteTable from '@/components/SiteTable'
 import SiteScatter from '@/components/SiteScatter'
+import Tour from '@/components/Tour'
+
+import { BIconCollectionPlay } from 'bootstrap-vue'
 
 import api from '@/mixins/api'
 
 export default {
   name: 'Home',
   components: {
+    BIconCollectionPlay,
     SiteMap,
     SiteTable,
-    SiteScatter
+    SiteScatter,
+    Tour
   },
   data: function () {
     return {
@@ -42,6 +51,29 @@ export default {
     }
   },
   computed: {
+    tourSteps: function () {
+      return [{
+        title: () => 'Welcome',
+        text: () => 'Welcome to the crop mixtures data explorer (working title) will show you crop yields and other data from intercrop trials on commercial and research farms across Scotland.',
+        target: () => '#main-navigation',
+        position: 'bottom'
+      }, {
+        title: () => 'Data table',
+        text: () => 'Simply type a search term into the \'Filter\' box below, such as a crop species, tillage or management type that interests you. The datasets for those mixtures will be shown in the table – click on the icons in the table to find out more information for each trial.',
+        target: () => '#search',
+        position: 'auto'
+      }, {
+        title: () => 'Dataset map',
+        text: () => 'The yield data for the selected trials are also shown on the map below the table, both for the mixture and for each crop in monoculture. Trials with larger bubbles have larger values of yield.',
+        target: () => '#map',
+        position: 'auto'
+      }, {
+        title: () => 'Scatter plot',
+        text: () => 'Further below you can plot measurements against each other and colour code the results by farm type, soil tillage and other management actions. Simply select a metric in the drop-down list for each dimension and choose your preferred way of colour coding them.',
+        target: () => '#scatter-section',
+        position: 'auto'
+      }]
+    },
     categories: function () {
       const result = {}
       if (this.serverData) {
@@ -69,6 +101,9 @@ export default {
   },
   mixins: [api],
   methods: {
+    showIntroduction: function () {
+      this.$refs.tour.start()
+    },
     updateMap: function (ids) {
       if (this.$refs.map) {
         this.$refs.map.filterDatasets(ids)

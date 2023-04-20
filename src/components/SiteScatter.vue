@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-3">
+  <div class="mt-3" id="scatter-section">
     <ScatterChart :plotData="blob" :dataColumns="columns" v-for="index in chartCount" :key="`chart-${index}`" />
     <b-button @click="chartCount++">Add</b-button>
   </div>

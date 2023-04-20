@@ -9,7 +9,7 @@
         </b-button>
       </b-button-group>
 
-      <LMap ref="locationMap" :bounds="bounds" @ready="loadMap" class="map">
+      <LMap ref="locationMap" :bounds="bounds" @ready="loadMap" class="map" id="map">
         <LControl position="bottomleft" class="leaflet-control-layers" v-if="categories && variable && categories[variable]">
           <div class="p-2 legend">
             <div v-for="(category, index) in categories[variable]" :key="`color-mapping-${category}`">
